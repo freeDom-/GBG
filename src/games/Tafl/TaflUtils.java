@@ -105,12 +105,12 @@ public class TaflUtils {
     }
 
     static boolean isKingCaptured(TaflTile[][] board, TaflTile lastMovedToken) {
-        TaflTile[] neighbors = getNeighbors(board, lastMovedToken);
+        ArrayList<TaflTile> neighbors = getNeighbors(board, lastMovedToken);
         for (TaflTile neighbor : neighbors) {
             if (neighbor.getToken() == KING) {
                 TaflTile king = neighbor;
                 if (isTileThrone(king) || isTileNextToThrone(king) || TaflConfig.RULE_HARD_KING_CAPTURE) {
-                    TaflTile[] kingsNeighbors = getNeighbors(board, king);
+                    ArrayList<TaflTile> kingsNeighbors = getNeighbors(board, king);
                     for (TaflTile kingsNeighbor : kingsNeighbors) {
                         if (!isTileHostile(kingsNeighbor, PLAYER_WHITE)) {
                             return false;
@@ -134,7 +134,31 @@ public class TaflUtils {
         return false;
     }
 
-    static TaflTile[] getNeighbors(TaflTile[][] board, TaflTile tile) {
+    static ArrayList<TaflTile> getCaptures(TaflTile[][] board, TaflTile lastMovedToken) {
+        ArrayList<TaflTile> captures = new ArrayList<>();
+        ArrayList<TaflTile> neighbors = getNeighbors(board, lastMovedToken);
+        int enemy = lastMovedToken.getPlayer() == PLAYER_BLACK ? PLAYER_WHITE : PLAYER_BLACK;
+        int enemyToken = lastMovedToken.getPlayer() == PLAYER_BLACK ? WHITE_TOKEN : BLACK_TOKEN;
+        for (TaflTile neighbor : neighbors) {
+            if (neighbor.getToken() == enemyToken) {
+                // Check if token is captured
+                // Get difference between lastMovedToken and enemy token and multiply this value to get the token behind the enemy
+                int behindEnemyX = neighbor.getCoords().x + (neighbor.getCoords().x - lastMovedToken.getCoords().x);
+                int behindEnemyY = neighbor.getCoords().y + (neighbor.getCoords().y - lastMovedToken.getCoords().y);
+
+                if (isValidTile(behindEnemyX, behindEnemyY)) {
+                    TaflTile behindEnemy = board[behindEnemyX][behindEnemyY];
+                    if (isTileHostile(behindEnemy, enemy)) {
+                        captures.add(neighbor);
+                    }
+                }
+            }
+        }
+
+        return captures;
+    }
+
+    static ArrayList<TaflTile> getNeighbors(TaflTile[][] board, TaflTile tile) {
         ArrayList<TaflTile> neighbors = new ArrayList<>();
         Point coords = tile.getCoords();
         int x = coords.x;
@@ -151,7 +175,7 @@ public class TaflUtils {
         if (isValidTile(x, y + 1)) {
             neighbors.add(board[x][y + 1]);
         }
-        return neighbors.toArray(new TaflTile[0]);
+        return neighbors;
     }
 
     /**
@@ -186,6 +210,49 @@ public class TaflUtils {
         }
 
         return new Point[]{start, end};
+    }
+
+    static ArrayList<Point> generateMovesForToken(TaflTile[][] board, TaflTile token) {
+        ArrayList<Point> targets = new ArrayList<>();
+        Point coords = token.getCoords();
+        int x = coords.x - 1;
+        int y = coords.y;
+        while (TaflUtils.isValidTile(x, y) && board[x][y].getToken() == EMPTY) {
+            TaflTile tile = board[x][y];
+            if (token.getToken() == KING || (!isTileCorner(tile) && !isTileThrone(tile))) {
+                targets.add(new Point(x, y));
+            }
+            x--;
+        }
+        x = coords.x + 1;
+        y = coords.y;
+        while (TaflUtils.isValidTile(x, y) && board[x][y].getToken() == EMPTY) {
+            TaflTile tile = board[x][y];
+            if (token.getToken() == KING || (!isTileCorner(tile) && !isTileThrone(tile))) {
+                targets.add(new Point(x, y));
+            }
+            x++;
+        }
+        x = coords.x;
+        y = coords.y - 1;
+        while (TaflUtils.isValidTile(x, y) && board[x][y].getToken() == EMPTY) {
+            TaflTile tile = board[x][y];
+            if (token.getToken() == KING || (!isTileCorner(tile) && !isTileThrone(tile))) {
+                targets.add(new Point(x, y));
+            }
+            y--;
+        }
+        x = coords.x;
+        y = coords.y + 1;
+        while (TaflUtils.isValidTile(x, y) && board[x][y].getToken() == EMPTY) {
+            TaflTile tile = board[x][y];
+            if (token.getToken() == KING || (!isTileCorner(tile) && !isTileThrone(tile))) {
+                targets.add(new Point(x, y));
+            }
+            y++;
+        }
+
+        return targets;
     }
 
     /**
