@@ -2,7 +2,8 @@ package games.Tafl;
 
 import games.Hex.EvaluatorHex;
 
-public class TaflConfig {
+public class TaflConfig
+{
 
     final static double REWARD_NEGATIVE = -1.0;
     final static double REWARD_POSITIVE = 1.0;
@@ -30,7 +31,7 @@ public class TaflConfig {
     final static int EVAL_NUMEPISODES = 3; // 5; //10;
 
     static boolean RULE_HARD_KING_CAPTURE = false;
-    static boolean RULE_WHITE_SURROUNDED_VICTORY = false;
+    static boolean RULE_WHITE_LOSES_ON_SURROUND = false;
     static boolean RULE_SHIELDWALL_CAPTURE = false;
-    static boolean RULE_REPETITIONS_LOSS = false;
+    static boolean RULE_WHITE_LOSES_ON_REPETITIONS = false;
 }

@@ -248,7 +248,7 @@ abstract public class AgentBase implements PlayAgent, Serializable {
 		}
 
 		return false;		
-	} 
+	}
 
 	/**
 	 * Normalize game score or reward from range [oldMin,oldMax] to range

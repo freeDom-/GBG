@@ -196,7 +196,7 @@ public class GameBoardTaflGui {
                         (m_gb.getArena().taskState != Arena.Task.PLAY && m_gb.getArena().taskState != Arena.Task.INSPECTV)) {
                     return;
                 }
-                Point p = new Point(TaflUtils.positionToPoint(e.getX(), e.getY(), TaflConfig.BOARD_SIZE));
+                Point p = new Point(TaflUtils.mousePositionToPoint(e.getX(), e.getY(), TaflConfig.BOARD_SIZE));
                 if (p.x < 0 || p.y < 0 || p.x >= TaflConfig.BOARD_SIZE || p.y >= TaflConfig.BOARD_SIZE) return;
 
                 if (selectedToken == null) {

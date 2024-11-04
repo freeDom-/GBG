@@ -1,100 +1,214 @@
 package games.Tafl;
 
 import games.BoardVector;
-import games.StateObsWithBoardVector;
 import games.StateObservation;
+import games.XNTupleBase;
 import games.XNTupleFuncs;
 
+import java.awt.*;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.HashSet;
 
-public class XNTupleFuncsTafl implements XNTupleFuncs, Serializable {
+public class XNTupleFuncsTafl
+    extends XNTupleBase
+    implements XNTupleFuncs, Serializable
+{
 
     @Serial
     private static final long serialVersionUID = 1L;
 
-    public XNTupleFuncsTafl() {
+    public XNTupleFuncsTafl()
+    {
 
     }
 
     @Override
-    public boolean instantiateAfterLoading() {
-        return false;
+    public int getNumCells()
+    {
+        return TaflConfig.TILE_COUNT;
     }
 
     @Override
-    public int getNumCells() {
-        return 0;
+    public int getNumPositionValues()
+    {
+        return 4;
     }
 
     @Override
-    public int getNumPositionValues() {
-        return 0;
+    public int getNumPlayers()
+    {
+        return 2;
     }
 
     @Override
-    public int[] getPositionValuesVector() {
+    public int getNumSymmetries()
+    {
+        return 6;
+    }
+
+    @Override
+    public BoardVector getBoardVector(StateObservation so)
+    {
+        StateObserverTafl stateObs = (StateObserverTafl) so;
+        TaflTile[] boardVectorTiles = TaflUtils.boardToVector(stateObs.getBoard());
+        int[] boardVectorInt = new int[boardVectorTiles.length];
+
+        for (int i = 0; i < boardVectorInt.length; i++)
+        {
+            boardVectorInt[i] = boardVectorTiles[i].getToken();
+        }
+
+        return new BoardVector(boardVectorInt);
+    }
+
+    @Override
+    public BoardVector[] symmetryVectors(BoardVector boardVector, int n)
+    {
+        BoardVector[] symmetries = new BoardVector[3];
+        symmetries[0] = boardVector;
+        symmetries[1] = mirrorBoard(boardVector, Axis.VERTICAL);
+        symmetries[2] = mirrorBoard(boardVector, Axis.HORIZONTAL);
+        //symmetries[3] = rotate(boardVector);
+        //symmetries[4] = rotate(symmetries[3]);
+        //symmetries[5] = rotate(symmetries[4]);
+        return symmetries;
+    }
+
+    @Override
+    public int[] symmetryActions(int actionKey)
+    {
+        // TODO: need to add symmetry actions
         return new int[0];
     }
 
     @Override
-    public int getNumPlayers() {
-        return 0;
+    public int[][] fixedNTuples(int mode)
+    {
+        int[][] tuples;
+
+        switch (mode)
+        {
+            case 1:
+                tuples = new int[TaflConfig.BOARD_SIZE * 2][TaflConfig.BOARD_SIZE];
+                for (int i = 0; i < TaflConfig.BOARD_SIZE; i++)
+                {
+                    for (int j = 0; j < TaflConfig.BOARD_SIZE; j++)
+                    {
+                        int actionInt = i * TaflConfig.BOARD_SIZE + j;
+                        tuples[i][j] = actionInt;
+
+                        actionInt = j * TaflConfig.BOARD_SIZE + i;
+                        tuples[i + TaflConfig.BOARD_SIZE][j] = actionInt;
+                    }
+                }
+                break;
+            default:
+                throw new RuntimeException("[fixedNTuples] mode=" + mode + " not allowed");
+        }
+
+        return tuples;
     }
 
     @Override
-    public int getNumSymmetries() {
-        return 0;
+    public String fixedTooltipString()
+    {
+        // use "<html> ... <br> ... </html>" to get multi-line tooltip text
+        return "<html>"
+               + "1: board columns + board rows<br>"
+               + "</html>";
+    }
+
+    private static final int[] fixedModes = {1};
+
+    @Override
+    public int[] fixedNTupleModesAvailable()
+    {
+        return fixedModes;
     }
 
     @Override
-    public BoardVector getBoardVector(StateObservation so) {
-        return null;
+    public HashSet adjacencySet(int iCell)
+    {
+        HashSet<Integer> adjacencySet = new HashSet<>();
+        Point neighbor;
+        Point coords = TaflUtils.positionToPoint(iCell);
+        int x = coords.x;
+        int y = coords.y;
+        if (TaflUtils.isValidTile(x - 1, y))
+        {
+            neighbor = new Point(x - 1, y);
+            adjacencySet.add(TaflUtils.pointToPosition(neighbor));
+        }
+        if (TaflUtils.isValidTile(x + 1, y))
+        {
+            neighbor = new Point(x + 1, y);
+            adjacencySet.add(TaflUtils.pointToPosition(neighbor));
+        }
+        if (TaflUtils.isValidTile(x, y - 1))
+        {
+            neighbor = new Point(x, y - 1);
+            adjacencySet.add(TaflUtils.pointToPosition(neighbor));
+        }
+        if (TaflUtils.isValidTile(x, y + 1))
+        {
+            neighbor = new Point(x, y + 1);
+            adjacencySet.add(TaflUtils.pointToPosition(neighbor));
+        }
+        return adjacencySet;
     }
 
-    @Override
-    public BoardVector makeBoardVectorEachCellDifferent() {
-        return null;
+    private enum Axis
+    {
+        HORIZONTAL, VERTICAL
     }
 
-    @Override
-    public BoardVector[] symmetryVectors(BoardVector boardVector, int n) {
-        return new BoardVector[0];
-    }
+    /**
+     * Mirrors the board along the given axis.
+     *
+     * @param boardVector Game board vector
+     * @param axis        Axis along which to mirror
+     * @return Mirrored board
+     */
+    private BoardVector mirrorBoard(BoardVector boardVector, Axis axis)
+    {
+        int[] mirroredVector = boardVector.bvec.clone();
 
-    @Override
-    public BoardVector[] symmetryVectors(StateObsWithBoardVector curSOWB, int n) {
-        return new BoardVector[0];
-    }
+        if (axis == Axis.VERTICAL)
+        {
+            //Subdivide into chunks of BOARD_SIZE elements and reverse each
+            //Example for BOARD_SIZE=3:
+            //Before: 1,2,3, 4,5,6, 7,8,9
+            //After:  3,2,1, 6,5,4, 9,8,7
+            for (int i = 0; i < TaflConfig.BOARD_SIZE; i++)
+            {
+                int[] tmp = new int[TaflConfig.BOARD_SIZE];
+                for (int j = 0; j < ((TaflConfig.BOARD_SIZE + 1) / 2); j++)
+                {
+                    tmp[j] = mirroredVector[i * TaflConfig.BOARD_SIZE + j];
+                    mirroredVector[i * TaflConfig.BOARD_SIZE + j] = mirroredVector[i * TaflConfig.BOARD_SIZE + TaflConfig.BOARD_SIZE - j - 1];
+                    mirroredVector[i * TaflConfig.BOARD_SIZE + TaflConfig.BOARD_SIZE - j - 1] = tmp[j];
+                }
+            }
+        }
+        else if (axis == Axis.HORIZONTAL)
+        {
+            //Swap the places of chunks of BOARD_SIZE elements from front and end until center is reached
+            //Example for BOARD_SIZE=3:
+            //Before: 1,2,3, 4,5,6, 7,8,9
+            //After:  7,8,9, 4,5,6, 1,2,3
+            for (int i = 0; i < ((TaflConfig.BOARD_SIZE + 1) / 2); i++)
+            {
+                int[] tmp = new int[TaflConfig.BOARD_SIZE];
+                for (int j = 0; j < TaflConfig.BOARD_SIZE; j++)
+                {
+                    tmp[j] = mirroredVector[i * TaflConfig.BOARD_SIZE + j];
+                    mirroredVector[i * TaflConfig.BOARD_SIZE + j] = mirroredVector[(TaflConfig.BOARD_SIZE - i - 1) * TaflConfig.BOARD_SIZE + j];
+                    mirroredVector[(TaflConfig.BOARD_SIZE - i - 1) * TaflConfig.BOARD_SIZE + j] = tmp[j];
+                }
+            }
+        }
 
-    @Override
-    public int[] symmetryActions(int actionKey) {
-        return new int[0];
-    }
-
-    @Override
-    public boolean useActionMap() {
-        return false;
-    }
-
-    @Override
-    public int[][] fixedNTuples(int mode) {
-        return new int[0][];
-    }
-
-    @Override
-    public String fixedTooltipString() {
-        return "";
-    }
-
-    @Override
-    public int[] fixedNTupleModesAvailable() {
-        return new int[0];
-    }
-
-    @Override
-    public HashSet adjacencySet(int iCell) {
-        return null;
+        return new BoardVector(mirroredVector);
     }
 }
