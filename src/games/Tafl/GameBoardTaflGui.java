@@ -204,7 +204,7 @@ public class GameBoardTaflGui {
                     return;
                 }
 
-                Types.ACTIONS act = Types.ACTIONS.fromInt(TaflUtils.getTargetActionNumber(selectedToken, p));
+                Types.ACTIONS act = Types.ACTIONS.fromInt(TaflUtils.getActionNumberFromMove(selectedToken, p));
                 selectedToken = null;
                 m_gb.m_so.advance(act, null);
                 if (m_gb.getArena().taskState == Arena.Task.PLAY) {

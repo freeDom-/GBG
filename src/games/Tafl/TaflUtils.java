@@ -5,8 +5,7 @@ import tools.Types;
 import java.awt.*;
 import java.util.ArrayList;
 
-public class TaflUtils
-{
+public class TaflUtils {
 
     public static final int PLAYER_NONE = -1; // Beginning player
     public static final int PLAYER_BLACK = 0; // Beginning player
@@ -17,62 +16,59 @@ public class TaflUtils
     public static final int WHITE_TOKEN = 1;
     public static final int KING = 2;
 
-    static final int[][] startBoard7 = new int[][] {
-        {0, 0, 0, -1, 0, 0, 0},
-        {0, 0, 0, -1, 0, 0, 0},
-        {0, 0, 0, 1, 0, 0, 0},
-        {-1, -1, 1, 2, 1, -1, -1},
-        {0, 0, 0, 1, 0, 0, 0},
-        {0, 0, 0, -1, 0, 0, 0},
-        {0, 0, 0, -1, 0, 0, 0}
+    static final int[][] startBoard7 = new int[][]{
+            {0, 0, 0, -1, 0, 0, 0},
+            {0, 0, 0, -1, 0, 0, 0},
+            {0, 0, 0, 1, 0, 0, 0},
+            {-1, -1, 1, 2, 1, -1, -1},
+            {0, 0, 0, 1, 0, 0, 0},
+            {0, 0, 0, -1, 0, 0, 0},
+            {0, 0, 0, -1, 0, 0, 0}
     };
 
-    static final int[][] startBoard9 = new int[][] {
-        {0, 0, 0, -1, -1, -1, 0, 0, 0},
-        {0, 0, 0, 0, -1, 0, 0, 0, 0},
-        {0, 0, 0, 0, 1, 0, 0, 0, 0},
-        {-1, 0, 0, 0, 1, 0, 0, 0, -1},
-        {-1, -1, 1, 1, 2, 1, 1, -1, -1},
-        {-1, 0, 0, 0, 1, 0, 0, 0, -1},
-        {0, 0, 0, 0, 1, 0, 0, 0, 0},
-        {0, 0, 0, 0, -1, 0, 0, 0, 0},
-        {0, 0, 0, -1, -1, -1, 0, 0, 0}
+    static final int[][] startBoard9 = new int[][]{
+            {0, 0, 0, -1, -1, -1, 0, 0, 0},
+            {0, 0, 0, 0, -1, 0, 0, 0, 0},
+            {0, 0, 0, 0, 1, 0, 0, 0, 0},
+            {-1, 0, 0, 0, 1, 0, 0, 0, -1},
+            {-1, -1, 1, 1, 2, 1, 1, -1, -1},
+            {-1, 0, 0, 0, 1, 0, 0, 0, -1},
+            {0, 0, 0, 0, 1, 0, 0, 0, 0},
+            {0, 0, 0, 0, -1, 0, 0, 0, 0},
+            {0, 0, 0, -1, -1, -1, 0, 0, 0}
     };
 
-    static final int[][] startBoard11 = new int[][] {
-        {0, 0, 0, -1, -1, -1, -1, -1, 0, 0, 0},
-        {0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0},
-        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-        {-1, 0, 0, 0, 0, 1, 0, 0, 0, 0, -1},
-        {-1, 0, 0, 0, 1, 1, 1, 0, 0, 0, -1},
-        {-1, -1, 0, 1, 1, 2, 1, 1, 0, -1, -1},
-        {-1, 0, 0, 0, 1, 1, 1, 0, 0, 0, -1},
-        {-1, 0, 0, 0, 0, 1, 0, 0, 0, 0, -1},
-        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-        {0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0},
-        {0, 0, 0, -1, -1, -1, -1, -1, 0, 0, 0}
+    static final int[][] startBoard11 = new int[][]{
+            {0, 0, 0, -1, -1, -1, -1, -1, 0, 0, 0},
+            {0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            {-1, 0, 0, 0, 0, 1, 0, 0, 0, 0, -1},
+            {-1, 0, 0, 0, 1, 1, 1, 0, 0, 0, -1},
+            {-1, -1, 0, 1, 1, 2, 1, 1, 0, -1, -1},
+            {-1, 0, 0, 0, 1, 1, 1, 0, 0, 0, -1},
+            {-1, 0, 0, 0, 0, 1, 0, 0, 0, 0, -1},
+            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0},
+            {0, 0, 0, -1, -1, -1, -1, -1, 0, 0, 0}
     };
 
-    static boolean isTileCorner(TaflTile tile)
-    {
+    static boolean isTileCorner(TaflTile tile) {
         Point coords = tile.getCoords();
         return coords.x == 0 && coords.y == 0 || coords.x == 0 && coords.y == TaflConfig.BOARD_SIZE - 1 ||
-               coords.x == TaflConfig.BOARD_SIZE - 1 && coords.y == 0 || coords.x == TaflConfig.BOARD_SIZE - 1 && coords.y == TaflConfig.BOARD_SIZE - 1;
+                coords.x == TaflConfig.BOARD_SIZE - 1 && coords.y == 0 || coords.x == TaflConfig.BOARD_SIZE - 1 && coords.y == TaflConfig.BOARD_SIZE - 1;
     }
 
-    static boolean isTileThrone(TaflTile tile)
-    {
+    static boolean isTileThrone(TaflTile tile) {
         Point coords = tile.getCoords();
         return coords.x == TaflConfig.BOARD_SIZE / 2 && coords.y == TaflConfig.BOARD_SIZE / 2;
     }
 
-    static boolean isTileNextToThrone(TaflTile tile)
-    {
+    static boolean isTileNextToThrone(TaflTile tile) {
         Point coords = tile.getCoords();
         return (coords.x == TaflConfig.BOARD_SIZE / 2 - 1 && coords.y == TaflConfig.BOARD_SIZE / 2) ||
-               (coords.x == TaflConfig.BOARD_SIZE / 2 + 1 && coords.y == TaflConfig.BOARD_SIZE / 2) ||
-               (coords.x == TaflConfig.BOARD_SIZE / 2 && coords.y == TaflConfig.BOARD_SIZE / 2 - 1) ||
-               (coords.x == TaflConfig.BOARD_SIZE / 2 && coords.y == TaflConfig.BOARD_SIZE / 2 + 1);
+                (coords.x == TaflConfig.BOARD_SIZE / 2 + 1 && coords.y == TaflConfig.BOARD_SIZE / 2) ||
+                (coords.x == TaflConfig.BOARD_SIZE / 2 && coords.y == TaflConfig.BOARD_SIZE / 2 - 1) ||
+                (coords.x == TaflConfig.BOARD_SIZE / 2 && coords.y == TaflConfig.BOARD_SIZE / 2 + 1);
     }
 
     /**
@@ -82,31 +78,25 @@ public class TaflUtils
      * @param y index 2
      * @return True or False, depending on if the tile exists
      */
-    public static boolean isValidTile(int x, int y)
-    {
+    public static boolean isValidTile(int x, int y) {
         return (x >= 0 && x < TaflConfig.BOARD_SIZE) && (y >= 0 && y < TaflConfig.BOARD_SIZE);
     }
 
-    static boolean isTileHostile(TaflTile tile, int player)
-    {
+    static boolean isTileHostile(TaflTile tile, int player) {
         boolean checkHostileThrone = isTileThrone(tile) && (player == PLAYER_BLACK || tile.getToken() == EMPTY);
         boolean checkEnemy = player == PLAYER_BLACK && tile.getPlayer() == PLAYER_WHITE || player == PLAYER_WHITE && tile.getPlayer() == PLAYER_BLACK;
 
         return isTileCorner(tile) || checkHostileThrone || checkEnemy;
     }
 
-    static Types.WINNER getWinner(TaflTile[][] board, TaflTile lastMovedToken)
-    {
+    static Types.WINNER getWinner(TaflTile[][] board, TaflTile lastMovedToken) {
         // King escaped
-        if (lastMovedToken.getToken() == KING && isTileCorner(lastMovedToken))
-        {
+        if (lastMovedToken.getToken() == KING && isTileCorner(lastMovedToken)) {
             return Types.WINNER.PLAYER_WINS;
         }
         // King captured
-        if (lastMovedToken.getPlayer() == PLAYER_BLACK)
-        {
-            if (isKingCaptured(board, lastMovedToken))
-            {
+        if (lastMovedToken.getPlayer() == PLAYER_BLACK) {
+            if (isKingCaptured(board, lastMovedToken)) {
                 return Types.WINNER.PLAYER_WINS;
             }
         }
@@ -114,39 +104,28 @@ public class TaflUtils
         return null;
     }
 
-    static boolean isKingCaptured(TaflTile[][] board, TaflTile lastMovedToken)
-    {
+    static boolean isKingCaptured(TaflTile[][] board, TaflTile lastMovedToken) {
         TaflTile[] neighbors = getNeighbors(board, lastMovedToken);
-        for (TaflTile neighbor : neighbors)
-        {
-            if (neighbor.getToken() == KING)
-            {
+        for (TaflTile neighbor : neighbors) {
+            if (neighbor.getToken() == KING) {
                 TaflTile king = neighbor;
-                if (isTileThrone(king) || isTileNextToThrone(king) || TaflConfig.RULE_HARD_KING_CAPTURE)
-                {
+                if (isTileThrone(king) || isTileNextToThrone(king) || TaflConfig.RULE_HARD_KING_CAPTURE) {
                     TaflTile[] kingsNeighbors = getNeighbors(board, king);
-                    for (TaflTile kingsNeighbor : kingsNeighbors)
-                    {
-                        if (!isTileHostile(kingsNeighbor, PLAYER_WHITE))
-                        {
+                    for (TaflTile kingsNeighbor : kingsNeighbors) {
+                        if (!isTileHostile(kingsNeighbor, PLAYER_WHITE)) {
                             return false;
                         }
                     }
                     return true;
-                }
-                else
-                {
+                } else {
                     // Get difference between lastMovedToken and king and multiply this value to get the token behind the king
                     int behindKingX = king.getCoords().x + (king.getCoords().x - lastMovedToken.getCoords().x);
                     int behindKingY = king.getCoords().y + (king.getCoords().y - lastMovedToken.getCoords().y);
 
-                    if (isValidTile(behindKingX, behindKingY))
-                    {
+                    if (isValidTile(behindKingX, behindKingY)) {
                         TaflTile behindKing = board[behindKingX][behindKingY];
                         return isTileHostile(behindKing, PLAYER_WHITE);
-                    }
-                    else
-                    {
+                    } else {
                         return false;
                     }
                 }
@@ -155,46 +134,58 @@ public class TaflUtils
         return false;
     }
 
-    static TaflTile[] getNeighbors(TaflTile[][] board, TaflTile tile)
-    {
+    static TaflTile[] getNeighbors(TaflTile[][] board, TaflTile tile) {
         ArrayList<TaflTile> neighbors = new ArrayList<>();
         Point coords = tile.getCoords();
         int x = coords.x;
         int y = coords.y;
-        if (isValidTile(x - 1, y))
-        {
+        if (isValidTile(x - 1, y)) {
             neighbors.add(board[x - 1][y]);
         }
-        if (isValidTile(x + 1, y))
-        {
+        if (isValidTile(x + 1, y)) {
             neighbors.add(board[x + 1][y]);
         }
-        if (isValidTile(x, y - 1))
-        {
+        if (isValidTile(x, y - 1)) {
             neighbors.add(board[x][y - 1]);
         }
-        if (isValidTile(x, y + 1))
-        {
+        if (isValidTile(x, y + 1)) {
             neighbors.add(board[x][y + 1]);
         }
         return neighbors.toArray(new TaflTile[0]);
     }
 
-    static int getTargetActionNumber(Point start, Point end)
-    {
+    /**
+     * Converts a move from start position to end position to an action number
+     * (0-14 representing the respective position in the row or column)
+     *
+     * @param start position
+     * @param end   position
+     * @return number representation for an action
+     */
+    static int getActionNumberFromMove(Point start, Point end) {
         int offset = pointToPosition(start) * TaflConfig.ACTIONS_PER_TOKEN;
-        if (start.x == end.x)
-        {
+        if (start.x == end.x) {
             return offset + end.y;
-        }
-        else if (start.y == end.y)
-        {
+        } else if (start.y == end.y) {
             return offset + end.x + TaflConfig.BOARD_SIZE;
-        }
-        else
-        {
+        } else {
             throw new RuntimeException(String.format("Illegal move (%d,%d) -> (%d,%d)", start.x, start.y, end.x, end.y));
         }
+    }
+
+    static Point[] getMoveFromActionNumber(int actionNumber) {
+        Point start, end;
+
+        int startNumber = Math.floorDiv(actionNumber, TaflConfig.ACTIONS_PER_TOKEN);
+        start = positionToPoint(startNumber);
+        int action = actionNumber % TaflConfig.ACTIONS_PER_TOKEN;
+        if (action < TaflConfig.BOARD_SIZE) {
+            end = new Point(start.x, action);
+        } else {
+            end = new Point(action - TaflConfig.BOARD_SIZE, start.y);
+        }
+
+        return new Point[]{start, end};
     }
 
     /**
@@ -207,48 +198,37 @@ public class TaflUtils
      * @param board
      * @return
      */
-    static TaflTile[] boardToVector(TaflTile[][] board)
-    {
+    static TaflTile[] boardToVector(TaflTile[][] board) {
         TaflTile[] boardVector = new TaflTile[board.length * board.length];
-        for (int i = 0, k = 0; i < TaflConfig.BOARD_SIZE; i++)
-        {
-            for (int j = 0; j < TaflConfig.BOARD_SIZE; j++, k++)
-            {
+        for (int i = 0, k = 0; i < TaflConfig.BOARD_SIZE; i++) {
+            for (int j = 0; j < TaflConfig.BOARD_SIZE; j++, k++) {
                 boardVector[k] = board[i][j];
             }
         }
         return boardVector;
     }
 
-    static int pointToPosition(Point p)
-    {
+    static int pointToPosition(Point p) {
         return p.x * TaflConfig.BOARD_SIZE + p.y;
     }
 
-    static Point positionToPoint(int position)
-    {
+    static Point positionToPoint(int position) {
         int x = Math.floorDiv(position, TaflConfig.BOARD_SIZE);
         int y = position % TaflConfig.BOARD_SIZE;
         return new Point(x, y);
     }
 
-    static Point mousePositionToPoint(int mx, int my, int boardSize)
-    {
+    static Point mousePositionToPoint(int mx, int my, int boardSize) {
         Point p = new Point(-1, -1);
-        if (mx >= 0 && my >= 0)
-        {
-            for (int i = 0; i < boardSize; i++)
-            {
-                if ((i + 1) * TaflConfig.UI_TILE_SIZE >= mx)
-                {
+        if (mx >= 0 && my >= 0) {
+            for (int i = 0; i < boardSize; i++) {
+                if ((i + 1) * TaflConfig.UI_TILE_SIZE >= mx) {
                     p.x = i;
                     break;
                 }
             }
-            for (int j = 0; j < boardSize; j++)
-            {
-                if ((j + 1) * TaflConfig.UI_TILE_SIZE >= my)
-                {
+            for (int j = 0; j < boardSize; j++) {
+                if ((j + 1) * TaflConfig.UI_TILE_SIZE >= my) {
                     p.y = j;
                     break;
                 }
@@ -265,8 +245,7 @@ public class TaflUtils
      * @param tileSize size in px of each tile side to side
      * @return Rectangle for specified tile
      */
-    public static Rectangle createRect(int i, int j, int tileSize)
-    {
+    public static Rectangle createRect(int i, int j, int tileSize) {
         int x = i * tileSize;
         int y = j * tileSize;
 
@@ -281,20 +260,16 @@ public class TaflUtils
      * @param cellColor Color to draw the tile in
      * @param highlight If a red border surrounding the tile should be drawn
      */
-    public static void drawTile(TaflTile tile, Graphics2D g2, Color cellColor, boolean highlight)
-    {
+    public static void drawTile(TaflTile tile, Graphics2D g2, Color cellColor, boolean highlight) {
         Rectangle rect = tile.getRect();
 
         g2.setColor(cellColor);
         g2.fillRect(rect.x, rect.y, rect.width, rect.height);
 
-        if (highlight)
-        {
+        if (highlight) {
             g2.setStroke(new BasicStroke(3));
             g2.setColor(Color.RED);
-        }
-        else
-        {
+        } else {
             g2.setColor(GameBoardTaflGui.COLOR_GRID);
         }
 
@@ -312,11 +287,9 @@ public class TaflUtils
      * @param g2        Graphics context
      * @param cellColor Color of cell, needed for text color calculation
      */
-    public static void drawTileValueText(TaflTile tile, Graphics2D g2, Color cellColor)
-    {
+    public static void drawTileValueText(TaflTile tile, Graphics2D g2, Color cellColor) {
         double tileValue = tile.getValue();
-        if (Double.isNaN(tileValue))
-        {
+        if (Double.isNaN(tileValue)) {
             return;
         }
 
