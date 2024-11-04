@@ -42,7 +42,7 @@ public class GBGLaunch extends SetupGBG {
     //private static final long serialVersionUID = 1L;
     public static Arena t_Game;
     private final JFrame launcherUI;
-    private static String selectedGame = "TicTacToe";
+    private static String selectedGame = "Tafl";
 
     private final JLabel scaPar0_L;
     private final JLabel scaPar1_L;
