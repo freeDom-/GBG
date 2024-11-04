@@ -587,17 +587,17 @@ public class EvaluatorHex extends Evaluator {
     }
 
     @Override
-    public String getPrintString() {
-        return switch (m_mode) {
-            case -1 -> "no evaluation done ";
-            case 0 -> "success against MCTS (best is 1.0): ";
-            case 1 -> "success against Random (best is 1.0): ";
-            case 2 -> "success against Max-N (best is 1.0): ";
-            case 10 -> "success against MCTS (" + numStartStates + " diff. win start states, range [-1,1]): ";
-            case 20 -> "success against MCTS (" + numStartStates + " diff. start states, range [-1,1]): ";
-            case 11 -> "success against TDReferee (" + numStartStates + " diff. start states, range [-1,1]): ";
-            default -> null;
-        };
+    public String getPrintString() {return switch (m_mode) {
+        case -1 -> "no evaluation done ";
+        case 0 -> "success against MCTS (best is 1.0): ";
+        case 1 -> "success against Random (best is 1.0): ";
+        case 2 -> "success against Max-N (best is 1.0): ";
+        case 10 -> "success against MCTS (" + numStartStates + " diff. win start states, range [-1,1]): ";
+        case 20 -> "success against MCTS (" + numStartStates + " diff. start states, range [-1,1]): ";
+        case 11 -> "success against TDReferee (" + numStartStates + " diff. start states, range [-1,1]): ";
+        default -> null;
+    };
+
     }
 
 	@Override

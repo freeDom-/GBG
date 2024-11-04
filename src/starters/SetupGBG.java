@@ -12,6 +12,7 @@ import games.Othello.ArenaOthello;
 import games.Poker.ArenaPoker;
 import games.RubiksCube.ArenaCube;
 import games.Sim.ArenaSim;
+import games.Tafl.ArenaTafl;
 import games.TicTacToe.ArenaTTT;
 import games.Yavalath.ArenaYavalath;
 import games.ZweiTausendAchtundVierzig.Arena2048;
@@ -61,6 +62,8 @@ public class SetupGBG {
                 scaPar[0] = "2";
                 scaPar[1] = "5";
                 break;
+            case "Tafl":
+                scaPar[0] = "7";
             case "2048":
             case "Blackjack":
             case "ConnectFour":
@@ -139,6 +142,9 @@ public class SetupGBG {
                 ArenaSim.setNumNodes(Integer.parseInt(scaPar[1]));
                 ArenaSim.setCoalition(scaPar[2]);
                 return new ArenaSim(title, withUI,withTrainRights);
+            case "Tafl":
+                ArenaTafl.setBoardSize(Integer.parseInt(scaPar[0]));
+                return new ArenaTafl(title, withUI, withTrainRights);
             case "TicTacToe":
                 return new ArenaTTT(title, withUI,withTrainRights);
             case "Yavalath":
