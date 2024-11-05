@@ -7,9 +7,7 @@ import tools.Types;
 import java.awt.*;
 import java.io.Serial;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Random;
-import java.util.stream.Collectors;
 
 public class StateObserverTafl
     extends ObserverBase
@@ -35,12 +33,36 @@ public class StateObserverTafl
     public StateObserverTafl(StateObserverTafl other)
     {
         super(other);
-        board = Arrays.copyOf(other.board, other.board.length);
+        board = new TaflTile[TaflConfig.BOARD_SIZE][TaflConfig.BOARD_SIZE];
+        copyTable(other.board);
         currentPlayer = other.currentPlayer;
         lastMovedToken = other.lastMovedToken;
         if (other.availableActions != null)
         {
-            availableActions = (ArrayList<Types.ACTIONS>) other.availableActions.stream().map(Types.ACTIONS::new).collect(Collectors.toList());
+            //availableActions = (ArrayList<Types.ACTIONS>) other.availableActions.stream().map(Types.ACTIONS::new).collect(Collectors.toList());
+            setAvailableActions();
+        }
+    }
+
+    @Override
+    public StateObserverTafl copy()
+    {
+        return new StateObserverTafl(this);
+    }
+
+    /**
+     * Replaces the current game board array by a copy of the array that is passed as the parameter.
+     *
+     * @param table The game board array that is to be copied
+     */
+    private void copyTable(TaflTile[][] table)
+    {
+        for (int i = 0; i < TaflConfig.BOARD_SIZE; i++)
+        {
+            for (int j = 0; j < TaflConfig.BOARD_SIZE; j++)
+            {
+                board[i][j] = table[i][j].copy();
+            }
         }
     }
 
@@ -48,21 +70,6 @@ public class StateObserverTafl
     {
         return board;
     }
-
-    /*@Override
-    public void storeBestActionInfo(Types.ACTIONS_VT bestAction) {  //, double[] valueTable) {
-        double[] valueTable = bestAction.getVTable();
-        clearTileValues();
-
-        for (int k = 0; k < getNumAvailableActions(); ++k) {
-            double val = valueTable[k];
-            int actionInt = getAction(k).toInt();
-            Point[] move = TaflUtils.getMoveFromActionNumber(actionInt);
-            int startX = move[0].x;
-            int startY = move[0].y;
-            board[startX][startY].setValue(val);
-        }
-    }*/
 
     /**
      * Set all tile values to the default (Double.NaN)
@@ -111,12 +118,6 @@ public class StateObserverTafl
         }
 
         return newBoard;
-    }
-
-    @Override
-    public StateObserverTafl copy()
-    {
-        return new StateObserverTafl(this);
     }
 
     @Override
