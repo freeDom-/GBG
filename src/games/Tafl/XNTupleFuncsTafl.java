@@ -108,11 +108,11 @@ public class XNTupleFuncsTafl
                 {
                     for (int j = 0; j < TaflConfig.BOARD_SIZE; j++)
                     {
-                        int actionInt = i * TaflConfig.BOARD_SIZE + j;
-                        tuples[i][j] = actionInt;
+                        int position = i * TaflConfig.BOARD_SIZE + j;
+                        tuples[i][j] = position;
 
-                        actionInt = j * TaflConfig.BOARD_SIZE + i;
-                        tuples[i + TaflConfig.BOARD_SIZE][j] = actionInt;
+                        position = j * TaflConfig.BOARD_SIZE + i;
+                        tuples[i + TaflConfig.BOARD_SIZE][j] = position;
                     }
                 }
                 break;
@@ -145,28 +145,28 @@ public class XNTupleFuncsTafl
     {
         HashSet<Integer> adjacencySet = new HashSet<>();
         Point neighbor;
-        Point coords = TaflUtils.positionToPoint(iCell);
+        Point coords = TaflUtils.cellToPoint(iCell);
         int x = coords.x;
         int y = coords.y;
         if (TaflUtils.isValidTile(x - 1, y))
         {
             neighbor = new Point(x - 1, y);
-            adjacencySet.add(TaflUtils.pointToPosition(neighbor));
+            adjacencySet.add(TaflUtils.pointToCell(neighbor));
         }
         if (TaflUtils.isValidTile(x + 1, y))
         {
             neighbor = new Point(x + 1, y);
-            adjacencySet.add(TaflUtils.pointToPosition(neighbor));
+            adjacencySet.add(TaflUtils.pointToCell(neighbor));
         }
         if (TaflUtils.isValidTile(x, y - 1))
         {
             neighbor = new Point(x, y - 1);
-            adjacencySet.add(TaflUtils.pointToPosition(neighbor));
+            adjacencySet.add(TaflUtils.pointToCell(neighbor));
         }
         if (TaflUtils.isValidTile(x, y + 1))
         {
             neighbor = new Point(x, y + 1);
-            adjacencySet.add(TaflUtils.pointToPosition(neighbor));
+            adjacencySet.add(TaflUtils.pointToCell(neighbor));
         }
         return adjacencySet;
     }

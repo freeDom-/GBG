@@ -13,44 +13,44 @@ public class TaflUtils
     public static final int PLAYER_WHITE = 1;
 
     public static final int EMPTY = 0;
-    public static final int BLACK_TOKEN = -1;
-    public static final int WHITE_TOKEN = 1;
-    public static final int KING = 2;
+    public static final int BLACK_TOKEN = 1;
+    public static final int WHITE_TOKEN = 2;
+    public static final int KING = 3;
 
     static final int[][] startBoard7 = new int[][] {
-        {0, 0, 0, -1, 0, 0, 0},
-        {0, 0, 0, -1, 0, 0, 0},
         {0, 0, 0, 1, 0, 0, 0},
-        {-1, -1, 1, 2, 1, -1, -1},
         {0, 0, 0, 1, 0, 0, 0},
-        {0, 0, 0, -1, 0, 0, 0},
-        {0, 0, 0, -1, 0, 0, 0}
+        {0, 0, 0, 2, 0, 0, 0},
+        {1, 1, 2, 3, 2, 1, 1},
+        {0, 0, 0, 2, 0, 0, 0},
+        {0, 0, 0, 1, 0, 0, 0},
+        {0, 0, 0, 1, 0, 0, 0}
     };
 
     static final int[][] startBoard9 = new int[][] {
-        {0, 0, 0, -1, -1, -1, 0, 0, 0},
-        {0, 0, 0, 0, -1, 0, 0, 0, 0},
+        {0, 0, 0, 1, 1, 1, 0, 0, 0},
         {0, 0, 0, 0, 1, 0, 0, 0, 0},
-        {-1, 0, 0, 0, 1, 0, 0, 0, -1},
-        {-1, -1, 1, 1, 2, 1, 1, -1, -1},
-        {-1, 0, 0, 0, 1, 0, 0, 0, -1},
+        {0, 0, 0, 0, 2, 0, 0, 0, 0},
+        {1, 0, 0, 0, 2, 0, 0, 0, 1},
+        {1, 1, 2, 2, 3, 2, 2, 1, 1},
+        {1, 0, 0, 0, 2, 0, 0, 0, 1},
+        {0, 0, 0, 0, 2, 0, 0, 0, 0},
         {0, 0, 0, 0, 1, 0, 0, 0, 0},
-        {0, 0, 0, 0, -1, 0, 0, 0, 0},
-        {0, 0, 0, -1, -1, -1, 0, 0, 0}
+        {0, 0, 0, 1, 1, 1, 0, 0, 0}
     };
 
     static final int[][] startBoard11 = new int[][] {
-        {0, 0, 0, -1, -1, -1, -1, -1, 0, 0, 0},
-        {0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0},
+        {0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0},
+        {0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0},
         {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-        {-1, 0, 0, 0, 0, 1, 0, 0, 0, 0, -1},
-        {-1, 0, 0, 0, 1, 1, 1, 0, 0, 0, -1},
-        {-1, -1, 0, 1, 1, 2, 1, 1, 0, -1, -1},
-        {-1, 0, 0, 0, 1, 1, 1, 0, 0, 0, -1},
-        {-1, 0, 0, 0, 0, 1, 0, 0, 0, 0, -1},
+        {1, 0, 0, 0, 0, 2, 0, 0, 0, 0, 1},
+        {1, 0, 0, 0, 2, 2, 2, 0, 0, 0, 1},
+        {1, 1, 0, 2, 2, 3, 2, 2, 0, 1, 1},
+        {1, 0, 0, 0, 2, 2, 2, 0, 0, 0, 1},
+        {1, 0, 0, 0, 0, 2, 0, 0, 0, 0, 1},
         {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-        {0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0},
-        {0, 0, 0, -1, -1, -1, -1, -1, 0, 0, 0}
+        {0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0},
+        {0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0}
     };
 
     static boolean isTileCorner(TaflTile tile)
@@ -224,7 +224,7 @@ public class TaflUtils
      */
     static int getActionNumberFromMove(Point start, Point end)
     {
-        int offset = pointToPosition(start) * TaflConfig.ACTIONS_PER_TOKEN;
+        int offset = pointToCell(start) * TaflConfig.ACTIONS_PER_TOKEN;
         if (start.x == end.x)
         {
             return offset + end.y;
@@ -244,7 +244,7 @@ public class TaflUtils
         Point start, end;
 
         int startNumber = Math.floorDiv(actionNumber, TaflConfig.ACTIONS_PER_TOKEN);
-        start = positionToPoint(startNumber);
+        start = cellToPoint(startNumber);
         int action = actionNumber % TaflConfig.ACTIONS_PER_TOKEN;
         if (action < TaflConfig.BOARD_SIZE)
         {
@@ -333,12 +333,12 @@ public class TaflUtils
         return boardVector;
     }
 
-    static int pointToPosition(Point p)
+    static int pointToCell(Point p)
     {
         return p.x * TaflConfig.BOARD_SIZE + p.y;
     }
 
-    static Point positionToPoint(int position)
+    static Point cellToPoint(int position)
     {
         int x = Math.floorDiv(position, TaflConfig.BOARD_SIZE);
         int y = position % TaflConfig.BOARD_SIZE;
