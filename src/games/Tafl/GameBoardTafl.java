@@ -11,7 +11,10 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Random;
 
-public class GameBoardTafl extends GameBoardBase implements GameBoard {
+public class GameBoardTafl
+    extends GameBoardBase
+    implements GameBoard
+{
 
     protected StateObserverTafl m_so;
     protected Random rand;
@@ -19,100 +22,124 @@ public class GameBoardTafl extends GameBoardBase implements GameBoard {
 
     private transient GameBoardTaflGui m_gameGui = null;
 
-    public GameBoardTafl(Arena arena) {
+    public GameBoardTafl(Arena arena)
+    {
         super(arena);
 
         m_so = new StateObserverTafl();
         rand = new Random(System.currentTimeMillis());
 
-        if (getArena().hasGUI() && m_gameGui == null) {
+        if (getArena().hasGUI() && m_gameGui == null)
+        {
             m_gameGui = new GameBoardTaflGui(this);
         }
     }
 
     @Override
-    public void initialize() {
+    public void initialize()
+    {
     }
 
     /**
      * update game-specific parameters from {@link Arena}'s param tabs
      */
     @Override
-    public void updateParams() {
+    public void updateParams()
+    {
     }
 
     @Override
-    public void clearBoard(boolean boardClear, boolean vClear, Random cmpRand) {
-        if (boardClear) {
+    public void clearBoard(boolean boardClear, boolean vClear, Random cmpRand)
+    {
+        if (boardClear)
+        {
             m_so = new StateObserverTafl();
-        } else if (vClear) {
+        }
+        else if (vClear)
+        {
             m_so.clearTileValues();
         }
         // considerable speed-up during training (!)
-        if (m_gameGui != null && getArena().taskState != Arena.Task.TRAIN) {
+        if (m_gameGui != null && getArena().taskState != Arena.Task.TRAIN)
+        {
             m_gameGui.clearBoard(boardClear, vClear);
         }
     }
 
     @Override
-    public void updateBoard(StateObservation so, boolean withReset, boolean showValueOnGameboard) {
+    public void updateBoard(StateObservation so, boolean withReset, boolean showValueOnGameboard)
+    {
         setStateObs(so);    // asserts that so is StateObserverTafl
         StateObserverTafl soTafl = (StateObserverTafl) so;
 
-        if (m_gameGui != null) {
+        if (m_gameGui != null)
+        {
             m_gameGui.updateBoard(soTafl, withReset, showValueOnGameboard);
         }
 
-        if (verbose) {
+        if (verbose)
+        {
             // TODO: Add logging of features
         }
     }
 
     @Override
-    public void showGameBoard(Arena arena, boolean alignToMain) {
-        if (m_gameGui != null) {
+    public void showGameBoard(Arena arena, boolean alignToMain)
+    {
+        if (m_gameGui != null)
+        {
             m_gameGui.showGameBoard(arena, alignToMain);
         }
     }
 
     @Override
-    public void toFront() {
-        if (m_gameGui != null) {
+    public void toFront()
+    {
+        if (m_gameGui != null)
+        {
             m_gameGui.toFront();
         }
     }
 
     @Override
-    public void destroy() {
-        if (m_gameGui != null) {
+    public void destroy()
+    {
+        if (m_gameGui != null)
+        {
             m_gameGui.destroy();
         }
     }
 
     @Override
-    public String getSubDir() {
+    public String getSubDir()
+    {
         DecimalFormat form = new DecimalFormat("00");
         return form.format(TaflConfig.BOARD_SIZE);
     }
 
     @Override
-    public void enableInteraction(boolean enable) {
-        if (m_gameGui != null) {
+    public void enableInteraction(boolean enable)
+    {
+        if (m_gameGui != null)
+        {
             m_gameGui.enableInteraction(enable);
         }
     }
 
     @Override
-    public StateObservation getDefaultStartState(Random cmpRand) {
+    public StateObservation getDefaultStartState(Random cmpRand)
+    {
         clearBoard(true, true, null);
         return m_so;
     }
 
     @Override
-    public void setStateObs(StateObservation so) {
+    public void setStateObs(StateObservation so)
+    {
         StateObserverTafl soTafl;
 
-        if (so != null) {
+        if (so != null)
+        {
             assert (so instanceof StateObserverTafl) : "StateObservation 'so' is not an instance of StateObserverTafl";
             soTafl = (StateObserverTafl) so;
             m_so = soTafl; //.copy();
@@ -120,12 +147,14 @@ public class GameBoardTafl extends GameBoardBase implements GameBoard {
     }
 
     @Override
-    public StateObservation getStateObs() {
+    public StateObservation getStateObs()
+    {
         return m_so;
     }
 
     @Override
-    public StateObservation chooseStartState(PlayAgent pa) {
+    public StateObservation chooseStartState(PlayAgent pa)
+    {
         return chooseStartState();
     }
 
@@ -135,9 +164,11 @@ public class GameBoardTafl extends GameBoardBase implements GameBoard {
      * successors
      */
     @Override
-    public StateObservation chooseStartState() {
+    public StateObservation chooseStartState()
+    {
         clearBoard(true, true, null);
-        if (rand.nextDouble() > 0.5) {
+        if (rand.nextDouble() > 0.5)
+        {
             // choose randomly one of the possible actions in default
             // start state and advance m_so by one ply
             ArrayList<Types.ACTIONS> acts = m_so.getAvailableActions();

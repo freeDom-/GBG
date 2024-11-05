@@ -20,7 +20,9 @@ import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class EvaluatorTafl extends Evaluator {
+public class EvaluatorTafl
+    extends Evaluator
+{
 
     private MaxNAgent maxNAgent = null;
     private final String logDir = "logs/Tafl/train";
@@ -38,19 +40,23 @@ public class EvaluatorTafl extends Evaluator {
     private PrintWriter logFile;
     private StringBuilder logSB;
 
-    public EvaluatorTafl(PlayAgent e_PlayAgent, GameBoard gb, int mode, int verbose) {
+    public EvaluatorTafl(PlayAgent e_PlayAgent, GameBoard gb, int mode, int verbose)
+    {
         super(e_PlayAgent, gb, mode, verbose);
-        if (verbose == 1) {
+        if (verbose == 1)
+        {
             System.out.println("Using evaluation mode " + mode);
         }
         initEvaluator(e_PlayAgent, gb);
-        if (mode == 2 && maxNAgent.getDepth() < TaflConfig.TILE_COUNT) {
+        if (mode == 2 && maxNAgent.getDepth() < TaflConfig.TILE_COUNT)
+        {
             System.out.println("Using Max-N with limited tree depth: " +
-                    maxNAgent.getDepth() + " used, " + TaflConfig.TILE_COUNT + " needed");
+                               maxNAgent.getDepth() + " used, " + TaflConfig.TILE_COUNT + " needed");
         }
     }
 
-    private void initEvaluator(PlayAgent playAgent, GameBoard gameBoard) {
+    private void initEvaluator(PlayAgent playAgent, GameBoard gameBoard)
+    {
         this.m_gb = gameBoard;
         this.playAgent = playAgent;
 
@@ -61,30 +67,37 @@ public class EvaluatorTafl extends Evaluator {
     }
 
     @Override
-    protected EvalResult evalAgent(PlayAgent pa) {
+    protected EvalResult evalAgent(PlayAgent pa)
+    {
         this.playAgent = pa;
         //Disable evaluation by using mode -1
-        if (m_mode == -1) {
+        if (m_mode == -1)
+        {
             m_msg = "no evaluation done ";
             lastResult = Double.NaN;
             return new EvalResult(lastResult, true, m_msg, m_mode, Double.NaN);
         }
 
         //Disable logging for the final evaluation after training
-        if (!fileCreated && playAgent.getGameNum() == playAgent.getMaxGameNum()) {
+        if (!fileCreated && playAgent.getGameNum() == playAgent.getMaxGameNum())
+        {
             logResults = false;
         }
 
-        if (logResults && !fileCreated) {
+        if (logResults && !fileCreated)
+        {
             tools.Utils.checkAndCreateFolder(logDir);
             logSB = new StringBuilder();
             logSB.append("training_matches");
             logSB.append(",");
             logSB.append("result");
             logSB.append("\n");
-            try {
+            try
+            {
                 logFile = new PrintWriter(new File(logDir + "/" + getCurrentTimeStamp() + ".csv"));
-            } catch (FileNotFoundException e) {
+            }
+            catch (FileNotFoundException e)
+            {
                 e.printStackTrace();
             }
             fileCreated = true;
@@ -92,15 +105,16 @@ public class EvaluatorTafl extends Evaluator {
 
         double result;
         int numEpisodes = TaflConfig.EVAL_NUMEPISODES;
-        result = switch (m_mode) {
+        result = switch (m_mode)
+        {
             case 0 -> competeAgainstMCTS(playAgent, numEpisodes);
             case 1 -> competeAgainstRandom(playAgent);
             case 2 -> competeAgainstMaxN(playAgent, numEpisodes);
             default -> throw new RuntimeException("Invalid m_mode = " + m_mode);
         };
 
-
-        if (logResults) {
+        if (logResults)
+        {
             logSB.append(playAgent.getGameNum());
             logSB.append(",");
             logSB.append(result);
@@ -111,7 +125,8 @@ public class EvaluatorTafl extends Evaluator {
 
             //If the last game has been played, close the file handle.
             //Does not work if the maximum number of training games is not divisible by the number of games per eval.
-            if (playAgent.getMaxGameNum() == playAgent.getGameNum()) {
+            if (playAgent.getMaxGameNum() == playAgent.getGameNum())
+            {
                 logFile.close();
             }
         }
@@ -126,11 +141,13 @@ public class EvaluatorTafl extends Evaluator {
      * @param playAgent Agent to be evaluated
      * @return Percentage of games won on a scale of [0, 1] as double
      */
-    private double competeAgainstRandom(PlayAgent playAgent) {
+    private double competeAgainstRandom(PlayAgent playAgent)
+    {
         ScoreTuple sc = XArenaFuncs.competeNPlayer(new PlayAgtVector(playAgent, randomAgent), 0, new StateObserverTafl(), 100, verbose, null, null, null, false);
         lastResult = sc.scTup[0];
         m_msg = playAgent.getName() + ": " + this.getPrintString() + lastResult;
-        if (this.verbose > 0) System.out.println(m_msg);
+        if (this.verbose > 0)
+            System.out.println(m_msg);
         return lastResult;
     }
 
@@ -142,11 +159,13 @@ public class EvaluatorTafl extends Evaluator {
      * @param playAgent Agent to be evaluated
      * @return Percentage of games won on a scale of [0, 1] as double
      */
-    private double competeAgainstMaxN(PlayAgent playAgent, int numEpisodes) {
+    private double competeAgainstMaxN(PlayAgent playAgent, int numEpisodes)
+    {
         ScoreTuple sc = XArenaFuncs.competeNPlayer(new PlayAgtVector(playAgent, maxNAgent), 0, new StateObserverTafl(), numEpisodes, verbose, null, null, null, false);
         lastResult = sc.scTup[0];
         m_msg = playAgent.getName() + ": " + this.getPrintString() + lastResult + "  (#=" + numEpisodes + ")";
-        if (this.verbose > 0) System.out.println(m_msg);
+        if (this.verbose > 0)
+            System.out.println(m_msg);
         return lastResult;
     }
 
@@ -159,7 +178,8 @@ public class EvaluatorTafl extends Evaluator {
      * @param numEpisodes number of episodes played during evaluation
      * @return a value in range [-1,1], depending on the rate of evaluation games won by the agent
      */
-    private double competeAgainstMCTS(PlayAgent playAgent, int numEpisodes) {
+    private double competeAgainstMCTS(PlayAgent playAgent, int numEpisodes)
+    {
         ParMCTS params = new ParMCTS();
         int numIterExp = (Math.min(TaflConfig.BOARD_SIZE, 5) - 1);
         params.setNumIter((int) Math.pow(10, numIterExp));
@@ -174,23 +194,28 @@ public class EvaluatorTafl extends Evaluator {
     }
 
     @Override
-    public int[] getAvailableModes() {
-        return new int[]{-1, 0, 1, 2};
+    public int[] getAvailableModes()
+    {
+        return new int[] {-1, 0, 1, 2};
     }
 
     @Override
-    public int getQuickEvalMode() {
+    public int getQuickEvalMode()
+    {
         return 0;
     }
 
     @Override
-    public int getTrainEvalMode() {
+    public int getTrainEvalMode()
+    {
         return -1;
     }
 
     @Override
-    public String getPrintString() {
-        return switch (m_mode) {
+    public String getPrintString()
+    {
+        return switch (m_mode)
+        {
             case -1 -> "no evaluation done ";
             case 0 -> "success against MCTS (best is 1.0): ";
             case 1 -> "success against Random (best is 1.0): ";
@@ -200,17 +225,20 @@ public class EvaluatorTafl extends Evaluator {
     }
 
     @Override
-    public String getTooltipString() {
+    public String getTooltipString()
+    {
         return "<html>-1: none<br>"
-                + "0: against MCTS, best is 1.0<br>"
-                + "1: against Random, best is 1.0<br>"
-                + "2: against Max-N, best is 1.0<br>"
-                + "</html>";
+               + "0: against MCTS, best is 1.0<br>"
+               + "1: against Random, best is 1.0<br>"
+               + "2: against Max-N, best is 1.0<br>"
+               + "</html>";
     }
 
     @Override
-    public String getPlotTitle() {
-        return switch (m_mode) {
+    public String getPlotTitle()
+    {
+        return switch (m_mode)
+        {
             case 0 -> "success against MCTS";
             case 1 -> "success against Random";
             case 2 -> "success against Max-N";
@@ -223,7 +251,8 @@ public class EvaluatorTafl extends Evaluator {
      *
      * @return the timestamp
      */
-    private static String getCurrentTimeStamp() {
+    private static String getCurrentTimeStamp()
+    {
         SimpleDateFormat sdfDate = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss");
         Date now = new Date();
         return sdfDate.format(now);

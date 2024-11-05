@@ -12,8 +12,9 @@ import java.util.Random;
 import java.util.stream.Collectors;
 
 public class StateObserverTafl
-        extends ObserverBase
-        implements StateObservation {
+    extends ObserverBase
+    implements StateObservation
+{
 
     @Serial
     private static final long serialVersionUID = 1L;
@@ -24,23 +25,27 @@ public class StateObserverTafl
 
     private ArrayList<Types.ACTIONS> availableActions;
 
-    public StateObserverTafl() {
+    public StateObserverTafl()
+    {
         board = defaultGameBoard();
         currentPlayer = TaflUtils.PLAYER_BLACK;
         setAvailableActions();
     }
 
-    public StateObserverTafl(StateObserverTafl other) {
+    public StateObserverTafl(StateObserverTafl other)
+    {
         super(other);
         board = Arrays.copyOf(other.board, other.board.length);
         currentPlayer = other.currentPlayer;
         lastMovedToken = other.lastMovedToken;
-        if (other.availableActions != null) {
+        if (other.availableActions != null)
+        {
             availableActions = (ArrayList<Types.ACTIONS>) other.availableActions.stream().map(Types.ACTIONS::new).collect(Collectors.toList());
         }
     }
 
-    public TaflTile[][] getBoard() {
+    public TaflTile[][] getBoard()
+    {
         return board;
     }
 
@@ -62,9 +67,12 @@ public class StateObserverTafl
     /**
      * Set all tile values to the default (Double.NaN)
      */
-    protected void clearTileValues() {
-        for (int i = 0; i < TaflConfig.BOARD_SIZE; i++) {
-            for (int j = 0; j < TaflConfig.BOARD_SIZE; j++) {
+    protected void clearTileValues()
+    {
+        for (int i = 0; i < TaflConfig.BOARD_SIZE; i++)
+        {
+            for (int j = 0; j < TaflConfig.BOARD_SIZE; j++)
+            {
                 board[i][j].setValue(Double.NaN);
             }
         }
@@ -73,25 +81,30 @@ public class StateObserverTafl
     /**
      * @return The last updated tile
      */
-    TaflTile getlastMovedToken() {
+    TaflTile getlastMovedToken()
+    {
         return lastMovedToken;
     }
 
     /**
      * @return An empty board array
      */
-    private TaflTile[][] defaultGameBoard() {
+    private TaflTile[][] defaultGameBoard()
+    {
         TaflTile[][] newBoard = new TaflTile[TaflConfig.BOARD_SIZE][TaflConfig.BOARD_SIZE];
 
-        int[][] board = switch (TaflConfig.BOARD_SIZE) {
+        int[][] board = switch (TaflConfig.BOARD_SIZE)
+        {
             case 7 -> TaflUtils.startBoard7;
             case 9 -> TaflUtils.startBoard9;
             case 11 -> TaflUtils.startBoard11;
             default -> throw new RuntimeException("Board size " + TaflConfig.BOARD_SIZE + " is not supported.");
         };
 
-        for (int i = 0; i < TaflConfig.BOARD_SIZE; i++) {
-            for (int j = 0; j < TaflConfig.BOARD_SIZE; j++) {
+        for (int i = 0; i < TaflConfig.BOARD_SIZE; i++)
+        {
+            for (int j = 0; j < TaflConfig.BOARD_SIZE; j++)
+            {
                 newBoard[i][j] = new TaflTile(i, j, board[i][j]);
                 newBoard[i][j].setRect(TaflUtils.createRect(i, j, TaflConfig.UI_TILE_SIZE));
             }
@@ -101,17 +114,22 @@ public class StateObserverTafl
     }
 
     @Override
-    public StateObserverTafl copy() {
+    public StateObserverTafl copy()
+    {
         return new StateObserverTafl(this);
     }
 
     @Override
-    public ArrayList<Types.ACTIONS> getAllAvailableActions() {
+    public ArrayList<Types.ACTIONS> getAllAvailableActions()
+    {
         ArrayList<Types.ACTIONS> allActions = new ArrayList<>();
-        for (int i = 0; i < TaflConfig.BOARD_SIZE; i++) {
-            for (int j = 0; j < TaflConfig.BOARD_SIZE; j++) {
+        for (int i = 0; i < TaflConfig.BOARD_SIZE; i++)
+        {
+            for (int j = 0; j < TaflConfig.BOARD_SIZE; j++)
+            {
                 int tokenAction = i * TaflConfig.BOARD_SIZE + j;
-                for (int k = 0; k < TaflConfig.ACTIONS_PER_TOKEN; k++) {
+                for (int k = 0; k < TaflConfig.ACTIONS_PER_TOKEN; k++)
+                {
                     int actionInt = tokenAction + k;
                     allActions.add(Types.ACTIONS.fromInt(actionInt));
                 }
@@ -122,23 +140,30 @@ public class StateObserverTafl
     }
 
     @Override
-    public ArrayList<Types.ACTIONS> getAvailableActions() {
+    public ArrayList<Types.ACTIONS> getAvailableActions()
+    {
         return availableActions;
     }
 
     @Override
-    public int getNumAvailableActions() {
+    public int getNumAvailableActions()
+    {
         return availableActions.size();
     }
 
     @Override
-    public void setAvailableActions() {
+    public void setAvailableActions()
+    {
         availableActions = new ArrayList<>();
-        for (int i = 0; i < TaflConfig.BOARD_SIZE; i++) {
-            for (int j = 0; j < TaflConfig.BOARD_SIZE; j++) {
-                if (board[i][j].getPlayer() == currentPlayer) {
+        for (int i = 0; i < TaflConfig.BOARD_SIZE; i++)
+        {
+            for (int j = 0; j < TaflConfig.BOARD_SIZE; j++)
+            {
+                if (board[i][j].getPlayer() == currentPlayer)
+                {
                     ArrayList<Point> targets = TaflUtils.generateMovesForToken(board, board[i][j]);
-                    for (Point target : targets) {
+                    for (Point target : targets)
+                    {
                         int actionNum = TaflUtils.getActionNumberFromMove(board[i][j].getCoords(), target);
                         availableActions.add(Types.ACTIONS.fromInt(actionNum));
                     }
@@ -148,14 +173,17 @@ public class StateObserverTafl
     }
 
     @Override
-    public Types.ACTIONS getAction(int i) {
+    public Types.ACTIONS getAction(int i)
+    {
         return availableActions.get(i);
     }
 
     @Override
-    public void advance(Types.ACTIONS action, Random cmpRand) {
+    public void advance(Types.ACTIONS action, Random cmpRand)
+    {
         super.advanceBase(action);        //		includes addToLastMoves(action)
-        if (action == null) {
+        if (action == null)
+        {
             System.out.println("TAFL ERROR: null given as action in advance()");
             return;
         }
@@ -169,11 +197,13 @@ public class StateObserverTafl
 
         TaflTile startTile = board[startX][startY];
         TaflTile endTile = board[endX][endY];
-        if (startTile.getPlayer() != currentPlayer) {
+        if (startTile.getPlayer() != currentPlayer)
+        {
             System.out.println("Token on tile (" + startX + ", " + startY + ") does not belong to the player " + currentPlayer + ".");
             return;
         }
-        if (endTile.getPlayer() != TaflUtils.PLAYER_NONE) {
+        if (endTile.getPlayer() != TaflUtils.PLAYER_NONE)
+        {
             System.out.println("Token on tile (" + startX + ", " + startY + ") is not empty.");
             return;
         }
@@ -184,7 +214,8 @@ public class StateObserverTafl
 
         // Get captures
         ArrayList<TaflTile> captures = TaflUtils.getCaptures(board, endTile);
-        for (TaflTile captured : captures) {
+        for (TaflTile captured : captures)
+        {
             captured.setPlayer(TaflUtils.PLAYER_NONE);
             captured.setToken(TaflUtils.EMPTY);
         }
@@ -197,12 +228,14 @@ public class StateObserverTafl
     }
 
     @Override
-    public int getPlayer() {
+    public int getPlayer()
+    {
         return currentPlayer;
     }
 
     @Override
-    public int getNumPlayers() {
+    public int getNumPlayers()
+    {
         return 2;
     }
 
@@ -212,10 +245,12 @@ public class StateObserverTafl
      * It is the reward from the perspective of {@code player}.
      */
     @Override
-    public double getGameScore(int player) {
+    public double getGameScore(int player)
+    {
         int sign = (player == currentPlayer) ? 1 : (-1);
         int winner = determineWinner();
-        if (winner == TaflUtils.PLAYER_NONE) {
+        if (winner == TaflUtils.PLAYER_NONE)
+        {
             return 0;
         }
 
@@ -223,18 +258,21 @@ public class StateObserverTafl
     }
 
     @Override
-    public double getMinGameScore() {
+    public double getMinGameScore()
+    {
         return TaflConfig.REWARD_NEGATIVE;
     }
 
     @Override
-    public double getMaxGameScore() {
+    public double getMaxGameScore()
+    {
         return TaflConfig.REWARD_POSITIVE;
     }
 
     @Override
-    public boolean isGameOver() {
-        return determineWinner() != TaflUtils.PLAYER_NONE;
+    public boolean isGameOver()
+    {
+        return determineWinner() != TaflUtils.PLAYER_NONE || getNumAvailableActions() == 0;
     }
 
     /**
@@ -242,9 +280,11 @@ public class StateObserverTafl
      *
      * @return ID of the player who won the game. ID of TaflConfig.PLAYER_NONE if game is not over.
      */
-    private int determineWinner() {
+    private int determineWinner()
+    {
         Types.WINNER winner = TaflUtils.getWinner(board, lastMovedToken);
-        if (winner == Types.WINNER.PLAYER_WINS || getNumAvailableActions() == 0) {
+        if (winner == Types.WINNER.PLAYER_WINS || getNumAvailableActions() == 0)
+        {
             //Reverse winners, since current player changes after the winning tile was placed
             return (currentPlayer == TaflUtils.PLAYER_BLACK ? TaflUtils.PLAYER_WHITE : TaflUtils.PLAYER_BLACK);
         }
@@ -252,26 +292,33 @@ public class StateObserverTafl
     }
 
     @Override
-    public boolean isDeterministicGame() {
+    public boolean isDeterministicGame()
+    {
         return true;
     }
 
     @Override
-    public boolean isFinalRewardGame() {
+    public boolean isFinalRewardGame()
+    {
         return true;
     }
 
     @Override
-    public boolean isLegalState() {
+    public boolean isLegalState()
+    {
         return true;
     }
 
     @Override
-    public String stringDescr() {
+    public String stringDescr()
+    {
         StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < TaflConfig.BOARD_SIZE; i++) {
-            for (int j = 0; j < TaflConfig.BOARD_SIZE; j++) {
-                switch (board[i][j].getToken()) {
+        for (int i = 0; i < TaflConfig.BOARD_SIZE; i++)
+        {
+            for (int j = 0; j < TaflConfig.BOARD_SIZE; j++)
+            {
+                switch (board[i][j].getToken())
+                {
                     case TaflUtils.BLACK_TOKEN:
                         sb.append('B');
                         break;

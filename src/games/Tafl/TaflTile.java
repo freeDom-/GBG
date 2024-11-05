@@ -3,7 +3,9 @@ package games.Tafl;
 import java.awt.*;
 import java.io.Serializable;
 
-public class TaflTile implements Serializable {
+public class TaflTile
+    implements Serializable
+{
 
     /**
      * change the version ID for serialization only if a newer version is no longer
@@ -24,10 +26,12 @@ public class TaflTile implements Serializable {
      * @param i first index in board array
      * @param j second index in board array
      */
-    public TaflTile(int i, int j, int token) {
+    public TaflTile(int i, int j, int token)
+    {
         coords = new Point(i, j);
         this.token = token;
-        this.player = switch (token) {
+        this.player = switch (token)
+        {
             case TaflUtils.BLACK_TOKEN -> TaflUtils.PLAYER_BLACK;
             case TaflUtils.WHITE_TOKEN, TaflUtils.KING -> TaflUtils.PLAYER_WHITE;
             default -> TaflUtils.PLAYER_NONE;
@@ -44,10 +48,12 @@ public class TaflTile implements Serializable {
      * @param rect  Rectangle containing the vertices needed for drawing the tile to the screen
      * @param value Tile value
      */
-    public TaflTile(int i, int j, int token, Rectangle rect, double value) {
+    public TaflTile(int i, int j, int token, Rectangle rect, double value)
+    {
         coords = new Point(i, j);
         this.token = token;
-        this.player = switch (token) {
+        this.player = switch (token)
+        {
             case TaflUtils.BLACK_TOKEN -> TaflUtils.PLAYER_BLACK;
             case TaflUtils.WHITE_TOKEN, TaflUtils.KING -> TaflUtils.PLAYER_WHITE;
             default -> TaflUtils.PLAYER_NONE;
@@ -59,47 +65,57 @@ public class TaflTile implements Serializable {
     /**
      * @return A point, with x and y being the place in the board array
      */
-    public Point getCoords() {
+    public Point getCoords()
+    {
         return coords;
     }
 
-    public int getToken() {
+    public int getToken()
+    {
         return token;
     }
 
-    public void setToken(int token) {
+    public void setToken(int token)
+    {
         this.token = token;
-        this.player = switch (token) {
+        this.player = switch (token)
+        {
             case TaflUtils.BLACK_TOKEN -> TaflUtils.PLAYER_BLACK;
             case TaflUtils.WHITE_TOKEN, TaflUtils.KING -> TaflUtils.PLAYER_WHITE;
             default -> TaflUtils.PLAYER_NONE;
         };
     }
 
-    public int getPlayer() {
+    public int getPlayer()
+    {
         return player;
     }
 
-    public void setPlayer(int player) {
+    public void setPlayer(int player)
+    {
         this.player = player;
     }
 
-    public Rectangle getRect() {
+    public Rectangle getRect()
+    {
         return rect;
     }
 
-    public void setRect(Rectangle rect) {
+    public void setRect(Rectangle rect)
+    {
         this.rect = rect;
     }
 
     @Override
-    public boolean equals(Object object) {
+    public boolean equals(Object object)
+    {
         return object != null && object instanceof TaflTile &&
-                ((TaflTile) object).getCoords().x == this.coords.x &&
-                ((TaflTile) object).getCoords().y == this.coords.y;
+               ((TaflTile) object).getCoords().x == this.coords.x &&
+               ((TaflTile) object).getCoords().y == this.coords.y;
     }
 
-    public double getValue() {
+    public double getValue()
+    {
         return value;
     }
 
@@ -108,16 +124,19 @@ public class TaflTile implements Serializable {
      *
      * @param value Tile value
      */
-    public void setValue(double value) {
+    public void setValue(double value)
+    {
         this.value = value;
     }
 
-    public TaflTile copy() {
+    public TaflTile copy()
+    {
         return new TaflTile(coords.x, coords.y, token, rect, value);
     }
 
     @Override
-    public String toString() {
+    public String toString()
+    {
         return "TaflTile [" + coords.x + ", " + coords.y + "]";
     }
 }

@@ -1,6 +1,7 @@
 package games.Tafl;
 
-public class TaflConfig {
+public class TaflConfig
+{
 
     final static double REWARD_NEGATIVE = -1.0;
     final static double REWARD_POSITIVE = 1.0;

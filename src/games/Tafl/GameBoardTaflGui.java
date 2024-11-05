@@ -9,7 +9,8 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-public class GameBoardTaflGui {
+public class GameBoardTaflGui
+{
 
     final static boolean GRAYSCALE = false; //Used to take screenshots of board states without using color
     final static Color COLOR_PLAYER_BLACK = Color.BLACK;
@@ -30,7 +31,8 @@ public class GameBoardTaflGui {
 
     private Point selectedToken;
 
-    public GameBoardTaflGui(GameBoardTafl gb) {
+    public GameBoardTaflGui(GameBoardTafl gb)
+    {
         m_gb = gb;
 
         //Board size +2 to account for offset on top and bottom of the window
@@ -40,7 +42,8 @@ public class GameBoardTaflGui {
         createAndShowGUI();
     }
 
-    private void createAndShowGUI() {
+    private void createAndShowGUI()
+    {
         gamePanel = new GameBoardTaflGui.TaflPanel();
         //m_frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
@@ -55,14 +58,17 @@ public class GameBoardTaflGui {
         m_frame.setVisible(true);
     }
 
-    public void clearBoard(boolean boardClear, boolean vClear) {
+    public void clearBoard(boolean boardClear, boolean vClear)
+    {
         m_frame.repaint();
     }
 
-    public void updateBoard(StateObservation so, boolean withReset, boolean showValueOnGameboard) {
+    public void updateBoard(StateObservation so, boolean withReset, boolean showValueOnGameboard)
+    {
         gamePanel.setShowValues(showValueOnGameboard);
 
-        if (so == null) {
+        if (so == null)
+        {
             m_frame.repaint();
             return;
         }
@@ -70,19 +76,23 @@ public class GameBoardTaflGui {
         m_frame.repaint();
     }
 
-    public void enableInteraction(boolean enable) {
+    public void enableInteraction(boolean enable)
+    {
 
     }
 
-    public void showGameBoard(Arena arena, boolean alignToMain) {
+    public void showGameBoard(Arena arena, boolean alignToMain)
+    {
         gamePanel.setVisible(true);
     }
 
-    public void toFront() {
+    public void toFront()
+    {
         gamePanel.toFront();
     }
 
-    public void destroy() {
+    public void destroy()
+    {
         m_frame.setVisible(false);
         m_frame.dispose();
     }
@@ -92,23 +102,28 @@ public class GameBoardTaflGui {
      * It is responsible for drawing the game state to the screen.
      * Includes a child class TaflMouseListener to process user input.
      */
-    public class TaflPanel extends JPanel {
+    public class TaflPanel
+        extends JPanel
+    {
 
         boolean showValues = true;
 
-        TaflPanel() {
+        TaflPanel()
+        {
             setBackground(GameBoardTaflGui.BACKGROUND_COLOR);
 
             TaflMouseListener ml = new TaflMouseListener();
             addMouseListener(ml);
         }
 
-        public void toFront() {
+        public void toFront()
+        {
             m_frame.setState(Frame.NORMAL);    // if window is iconified, display it normally
             super.setVisible(true);
         }
 
-        public void setShowValues(boolean showValueOnGameboard) {
+        public void setShowValues(boolean showValueOnGameboard)
+        {
             showValues = showValueOnGameboard;
         }
 
@@ -117,14 +132,16 @@ public class GameBoardTaflGui {
          *
          * @param g The graphics context
          */
-        public void paintComponent(Graphics g) {
+        public void paintComponent(Graphics g)
+        {
             Graphics2D g2 = (Graphics2D) g;
             super.paintComponent(g2);
 
             //Don't draw the game board while training to save CPU cycles
             if (m_gb.getArena().taskState != Arena.Task.TRAIN
-                    && m_gb.getArena().taskState != Arena.Task.MULTTRN
-            ) {
+                && m_gb.getArena().taskState != Arena.Task.MULTTRN
+            )
+            {
                 drawBoardToPanel(g2, showValues);
             }
         }
@@ -137,7 +154,8 @@ public class GameBoardTaflGui {
          * @param g2         The graphics context required for drawing to the screen.
          * @param showValues Whether tile values should be visible or not.
          */
-        private void drawBoardToPanel(Graphics2D g2, boolean showValues) {
+        private void drawBoardToPanel(Graphics2D g2, boolean showValues)
+        {
             g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
             g2.setFont(new Font("TimesRoman", Font.PLAIN, TaflConfig.UI_TILE_SIZE / 4));
 
@@ -147,35 +165,44 @@ public class GameBoardTaflGui {
             TaflTile lastMovedToken = m_gb.m_so.getlastMovedToken();
 
             //draw tiles
-            if (GRAYSCALE) {
+            if (GRAYSCALE)
+            {
                 showValues = false;
             }
-            for (int i = 0; i < TaflConfig.BOARD_SIZE; i++) {
-                for (int j = 0; j < TaflConfig.BOARD_SIZE; j++) {
+            for (int i = 0; i < TaflConfig.BOARD_SIZE; i++)
+            {
+                for (int j = 0; j < TaflConfig.BOARD_SIZE; j++)
+                {
                     TaflTile tile = m_gb.m_so.getBoard()[i][j];
                     Color cellColor = getBackgroundColor(tile);
                     TaflUtils.drawTile(tile, g2, cellColor, false);
-                    if (showValues && !GRAYSCALE) {
+                    if (showValues && !GRAYSCALE)
+                    {
                         TaflUtils.drawTileValueText(tile, g2, cellColor);
                     }
                 }
             }
 
             //draw last placed tile again so its highlighting overlaps all other tiles
-            if (lastMovedToken != null && !GRAYSCALE) {
+            if (lastMovedToken != null && !GRAYSCALE)
+            {
                 Color cellColor = getBackgroundColor(lastMovedToken);
                 TaflUtils.drawTile(lastMovedToken, g2, cellColor, true);
-                if (showValues) {
+                if (showValues)
+                {
                     TaflUtils.drawTileValueText(lastMovedToken, g2, cellColor);
                 }
             }
         }
 
-        private Color getBackgroundColor(TaflTile tile) {
-            if (TaflUtils.isTileCorner(tile)) {
+        private Color getBackgroundColor(TaflTile tile)
+        {
+            if (TaflUtils.isTileCorner(tile))
+            {
                 return COLOR_CORNER;
             }
-            if (TaflUtils.isTileThrone(tile)) {
+            if (TaflUtils.isTileThrone(tile))
+            {
                 return COLOR_THRONE;
             }
             return COLOR_CELL;
@@ -185,16 +212,22 @@ public class GameBoardTaflGui {
          * Converts the pixel that was clicked to the tile that is at that exact location,
          * taking into account the non-rectangular geometry of the tiles. Calculation done in TaflUtils.
          */
-        class TaflMouseListener extends MouseAdapter {
-            public void mouseReleased(MouseEvent e) {
+        class TaflMouseListener
+            extends MouseAdapter
+        {
+            public void mouseReleased(MouseEvent e)
+            {
                 if (m_gb.isActionReq() ||
-                        (m_gb.getArena().taskState != Arena.Task.PLAY && m_gb.getArena().taskState != Arena.Task.INSPECTV)) {
+                    (m_gb.getArena().taskState != Arena.Task.PLAY && m_gb.getArena().taskState != Arena.Task.INSPECTV))
+                {
                     return;
                 }
                 Point p = new Point(TaflUtils.mousePositionToPoint(e.getX(), e.getY(), TaflConfig.BOARD_SIZE));
-                if (p.x < 0 || p.y < 0 || p.x >= TaflConfig.BOARD_SIZE || p.y >= TaflConfig.BOARD_SIZE) return;
+                if (p.x < 0 || p.y < 0 || p.x >= TaflConfig.BOARD_SIZE || p.y >= TaflConfig.BOARD_SIZE)
+                    return;
 
-                if (selectedToken == null) {
+                if (selectedToken == null)
+                {
                     selectedToken = p;
                     return;
                 }
@@ -202,7 +235,8 @@ public class GameBoardTaflGui {
                 Types.ACTIONS act = Types.ACTIONS.fromInt(TaflUtils.getActionNumberFromMove(selectedToken, p));
                 selectedToken = null;
                 m_gb.m_so.advance(act, null);
-                if (m_gb.getArena().taskState == Arena.Task.PLAY) {
+                if (m_gb.getArena().taskState == Arena.Task.PLAY)
+                {
                     // only do this when passing here during 'PLAY': add a log entry in case of Human move
                     // Do NOT do this during 'INSPECT', because then we have (currently) no valid log session ID
                     (m_gb.getArena().getLogManager()).addLogEntry(act, m_gb.m_so, m_gb.getArena().getLogSessionID());
