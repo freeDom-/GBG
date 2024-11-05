@@ -90,6 +90,10 @@ public class TaflUtils {
     }
 
     static Types.WINNER getWinner(TaflTile[][] board, TaflTile lastMovedToken) {
+        if (lastMovedToken == null) {
+            //System.out.println("lastMovedToken was null");
+            return null;
+        }
         // King escaped
         if (lastMovedToken.getToken() == KING && isTileCorner(lastMovedToken)) {
             return Types.WINNER.PLAYER_WINS;
@@ -322,16 +326,29 @@ public class TaflUtils {
     /**
      * Draws a single tile
      *
-     * @param tile      Tile to be drawn
-     * @param g2        Graphics context
-     * @param cellColor Color to draw the tile in
-     * @param highlight If a red border surrounding the tile should be drawn
+     * @param tile            Tile to be drawn
+     * @param g2              Graphics context
+     * @param backgroundColor Color to draw the tile in
+     * @param highlight       If a red border surrounding the tile should be drawn
      */
-    public static void drawTile(TaflTile tile, Graphics2D g2, Color cellColor, boolean highlight) {
+    public static void drawTile(TaflTile tile, Graphics2D g2, Color backgroundColor, boolean highlight) {
         Rectangle rect = tile.getRect();
 
-        g2.setColor(cellColor);
-        g2.fillRect(rect.x, rect.y, rect.width, rect.height);
+        if (tile.getPlayer() != PLAYER_NONE) {
+            g2.setColor(backgroundColor);
+            g2.fillRect(rect.x, rect.y, rect.width, rect.height);
+            Color tokenColor = tile.getPlayer() == PLAYER_BLACK ? GameBoardTaflGui.COLOR_PLAYER_BLACK : GameBoardTaflGui.COLOR_PLAYER_WHITE;
+            g2.setColor(tokenColor);
+            g2.fillOval(rect.x, rect.y, rect.width, rect.height);
+            if (tile.getToken() == KING) {
+                g2.setColor(Color.BLACK);
+                Font font = new Font("Times New Roman", Font.BOLD, TaflConfig.UI_TILE_SIZE / 2);
+                drawCenteredString(g2, "K", rect, font);
+            }
+        } else {
+            g2.setColor(backgroundColor);
+            g2.fillRect(rect.x, rect.y, rect.width, rect.height);
+        }
 
         if (highlight) {
             g2.setStroke(new BasicStroke(3));
@@ -341,6 +358,26 @@ public class TaflUtils {
         }
 
         g2.drawRect(rect.x, rect.y, rect.width, rect.height);
+    }
+
+    /**
+     * Draw a String centered in the middle of a Rectangle.
+     *
+     * @param g    The Graphics instance.
+     * @param text The String to draw.
+     * @param rect The Rectangle to center the text in.
+     */
+    public static void drawCenteredString(Graphics g, String text, Rectangle rect, Font font) {
+        // Get the FontMetrics
+        FontMetrics metrics = g.getFontMetrics(font);
+        // Determine the X coordinate for the text
+        int x = rect.x + (rect.width - metrics.stringWidth(text)) / 2;
+        // Determine the Y coordinate for the text (note we add the ascent, as in java 2d 0 is top of the screen)
+        int y = rect.y + ((rect.height - metrics.getHeight()) / 2) + metrics.getAscent();
+        // Set the font
+        g.setFont(font);
+        // Draw the String
+        g.drawString(text, x, y);
     }
 
     /**

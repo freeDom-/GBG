@@ -99,7 +99,7 @@ public class GameBoardTaflGui {
         TaflPanel() {
             setBackground(GameBoardTaflGui.BACKGROUND_COLOR);
 
-            GameBoardTaflGui.TaflPanel.TaflMouseListener ml = new GameBoardTaflGui.TaflPanel.TaflMouseListener();
+            TaflMouseListener ml = new TaflMouseListener();
             addMouseListener(ml);
         }
 
@@ -153,7 +153,7 @@ public class GameBoardTaflGui {
             for (int i = 0; i < TaflConfig.BOARD_SIZE; i++) {
                 for (int j = 0; j < TaflConfig.BOARD_SIZE; j++) {
                     TaflTile tile = m_gb.m_so.getBoard()[i][j];
-                    Color cellColor = getTileColor(tile, showValues);
+                    Color cellColor = getBackgroundColor(tile);
                     TaflUtils.drawTile(tile, g2, cellColor, false);
                     if (showValues && !GRAYSCALE) {
                         TaflUtils.drawTileValueText(tile, g2, cellColor);
@@ -163,7 +163,7 @@ public class GameBoardTaflGui {
 
             //draw last placed tile again so its highlighting overlaps all other tiles
             if (lastMovedToken != null && !GRAYSCALE) {
-                Color cellColor = getTileColor(lastMovedToken, showValues);
+                Color cellColor = getBackgroundColor(lastMovedToken);
                 TaflUtils.drawTile(lastMovedToken, g2, cellColor, true);
                 if (showValues) {
                     TaflUtils.drawTileValueText(lastMovedToken, g2, cellColor);
@@ -171,19 +171,14 @@ public class GameBoardTaflGui {
             }
         }
 
-        private Color getTileColor(TaflTile tile, boolean showValues) {
-            int player = tile.getPlayer();
-            if (TaflUtils.isTileCorner(tile) && tile.getPlayer() == TaflUtils.PLAYER_NONE) {
+        private Color getBackgroundColor(TaflTile tile) {
+            if (TaflUtils.isTileCorner(tile)) {
                 return COLOR_CORNER;
             }
-            if (TaflUtils.isTileThrone(tile) && tile.getPlayer() == TaflUtils.PLAYER_NONE) {
+            if (TaflUtils.isTileThrone(tile)) {
                 return COLOR_THRONE;
             }
-            return switch (player) {
-                case TaflUtils.PLAYER_BLACK -> COLOR_PLAYER_BLACK;
-                case TaflUtils.PLAYER_WHITE -> COLOR_PLAYER_WHITE;
-                default -> COLOR_CELL;
-            };
+            return COLOR_CELL;
         }
 
         /**

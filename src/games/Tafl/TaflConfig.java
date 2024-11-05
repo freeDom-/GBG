@@ -1,9 +1,6 @@
 package games.Tafl;
 
-import games.Hex.EvaluatorHex;
-
-public class TaflConfig
-{
+public class TaflConfig {
 
     final static double REWARD_NEGATIVE = -1.0;
     final static double REWARD_POSITIVE = 1.0;
@@ -26,7 +23,7 @@ public class TaflConfig
     /**
      * Number of episodes to play when evaluating an agent
      *
-     * @see EvaluatorHex
+     * @see EvaluatorTafl
      */
     final static int EVAL_NUMEPISODES = 3; // 5; //10;
 

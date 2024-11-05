@@ -1,6 +1,5 @@
 package games.Tafl;
 
-import games.Hex.HexConfig;
 import games.ObserverBase;
 import games.StateObservation;
 import tools.Types;
@@ -9,8 +8,8 @@ import java.awt.*;
 import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 public class StateObserverTafl
         extends ObserverBase
@@ -37,7 +36,7 @@ public class StateObserverTafl
         currentPlayer = other.currentPlayer;
         lastMovedToken = other.lastMovedToken;
         if (other.availableActions != null) {
-            availableActions = (ArrayList<Types.ACTIONS>) List.copyOf(other.availableActions);
+            availableActions = (ArrayList<Types.ACTIONS>) other.availableActions.stream().map(Types.ACTIONS::new).collect(Collectors.toList());
         }
     }
 
@@ -45,12 +44,27 @@ public class StateObserverTafl
         return board;
     }
 
+    /*@Override
+    public void storeBestActionInfo(Types.ACTIONS_VT bestAction) {  //, double[] valueTable) {
+        double[] valueTable = bestAction.getVTable();
+        clearTileValues();
+
+        for (int k = 0; k < getNumAvailableActions(); ++k) {
+            double val = valueTable[k];
+            int actionInt = getAction(k).toInt();
+            Point[] move = TaflUtils.getMoveFromActionNumber(actionInt);
+            int startX = move[0].x;
+            int startY = move[0].y;
+            board[startX][startY].setValue(val);
+        }
+    }*/
+
     /**
      * Set all tile values to the default (Double.NaN)
      */
     protected void clearTileValues() {
-        for (int i = 0; i < HexConfig.BOARD_SIZE; i++) {
-            for (int j = 0; j < HexConfig.BOARD_SIZE; j++) {
+        for (int i = 0; i < TaflConfig.BOARD_SIZE; i++) {
+            for (int j = 0; j < TaflConfig.BOARD_SIZE; j++) {
                 board[i][j].setValue(Double.NaN);
             }
         }
@@ -103,6 +117,7 @@ public class StateObserverTafl
                 }
             }
         }
+
         return allActions;
     }
 
@@ -121,7 +136,7 @@ public class StateObserverTafl
         availableActions = new ArrayList<>();
         for (int i = 0; i < TaflConfig.BOARD_SIZE; i++) {
             for (int j = 0; j < TaflConfig.BOARD_SIZE; j++) {
-                if (board[i][j].getPlayer() != TaflUtils.PLAYER_NONE) {
+                if (board[i][j].getPlayer() == currentPlayer) {
                     ArrayList<Point> targets = TaflUtils.generateMovesForToken(board, board[i][j]);
                     for (Point target : targets) {
                         int actionNum = TaflUtils.getActionNumberFromMove(board[i][j].getCoords(), target);
@@ -155,7 +170,7 @@ public class StateObserverTafl
         TaflTile startTile = board[startX][startY];
         TaflTile endTile = board[endX][endY];
         if (startTile.getPlayer() != currentPlayer) {
-            System.out.println("Token on tile (" + startX + ", " + startY + ") belongs to the enemy player.");
+            System.out.println("Token on tile (" + startX + ", " + startY + ") does not belong to the player " + currentPlayer + ".");
             return;
         }
         if (endTile.getPlayer() != TaflUtils.PLAYER_NONE) {
@@ -174,12 +189,11 @@ public class StateObserverTafl
             captured.setToken(TaflUtils.EMPTY);
         }
 
-        lastMovedToken = board[endX][endY];
-        setAvailableActions();            // IMPORTANT: adjust the available actions (have reduced by one)
-        super.incrementMoveCounter();
-
+        lastMovedToken = endTile;
         // set up player for next advance()
         currentPlayer = (currentPlayer == TaflUtils.PLAYER_BLACK ? TaflUtils.PLAYER_WHITE : TaflUtils.PLAYER_BLACK);
+        setAvailableActions();            // IMPORTANT: adjust the available actions
+        super.incrementMoveCounter();
     }
 
     @Override
@@ -226,7 +240,7 @@ public class StateObserverTafl
     /**
      * Uses information from the last moved token to determine if the king is captured or escaped.
      *
-     * @return ID of the player who won the game. ID of HexConfig.PLAYER_NONE if game is not over.
+     * @return ID of the player who won the game. ID of TaflConfig.PLAYER_NONE if game is not over.
      */
     private int determineWinner() {
         Types.WINNER winner = TaflUtils.getWinner(board, lastMovedToken);
