@@ -124,16 +124,12 @@ public class StateObserverTafl
     public ArrayList<Types.ACTIONS> getAllAvailableActions()
     {
         ArrayList<Types.ACTIONS> allActions = new ArrayList<>();
-        for (int i = 0; i < TaflConfig.BOARD_SIZE; i++)
+        for (int i = 0; i < TaflConfig.TILE_COUNT; i++)
         {
-            for (int j = 0; j < TaflConfig.BOARD_SIZE; j++)
+            for (int j = 0; j < TaflConfig.ACTIONS_PER_TOKEN; j++)
             {
-                int tokenAction = i * TaflConfig.BOARD_SIZE + j;
-                for (int k = 0; k < TaflConfig.ACTIONS_PER_TOKEN; k++)
-                {
-                    int actionInt = tokenAction + k;
-                    allActions.add(Types.ACTIONS.fromInt(actionInt));
-                }
+                int actionInt = i * TaflConfig.ACTIONS_PER_TOKEN + j;
+                allActions.add(Types.ACTIONS.fromInt(actionInt));
             }
         }
 
