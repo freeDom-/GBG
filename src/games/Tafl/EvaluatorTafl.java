@@ -14,7 +14,6 @@ import params.ParMaxN;
 import params.ParOther;
 import tools.ScoreTuple;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
@@ -26,7 +25,6 @@ public class EvaluatorTafl
 
     private MaxNAgent maxNAgent = null;
     private final String logDir = "logs/Tafl/train";
-    protected int verbose = 0;
     private MCTSAgentT mctsAgent = null;
     private final RandomAgent randomAgent = new RandomAgent("Random");
     private final double trainingThreshold = 0.8;
@@ -35,7 +33,7 @@ public class EvaluatorTafl
     /**
      * logResults toggles logging of training progress to a csv file located in {@link #logDir}
      */
-    private boolean logResults = false;
+    private boolean logResults = true;
     private boolean fileCreated = false;
     private PrintWriter logFile;
     private StringBuilder logSB;
@@ -94,7 +92,7 @@ public class EvaluatorTafl
             logSB.append("\n");
             try
             {
-                logFile = new PrintWriter(new File(logDir + "/" + getCurrentTimeStamp() + ".csv"));
+                logFile = new PrintWriter(logDir + "/" + getCurrentTimeStamp() + ".csv");
             }
             catch (FileNotFoundException e)
             {
@@ -183,13 +181,14 @@ public class EvaluatorTafl
         ParMCTS params = new ParMCTS();
         int numIterExp = (Math.min(TaflConfig.BOARD_SIZE, 5) - 1);
         params.setNumIter((int) Math.pow(10, numIterExp));
+        params.setTreeDepth(50);
         mctsAgent = new MCTSAgentT("MCTS", new StateObserverTafl(), params);
 
         ScoreTuple sc = XArenaFuncs.competeNPlayer(new PlayAgtVector(playAgent, mctsAgent), 0, new StateObserverTafl(), numEpisodes, 0, null, null, null, false);
         lastResult = sc.scTup[0];
         m_msg = playAgent.getName() + ": " + this.getPrintString() + lastResult;
-        //if (this.verbose > 0)
-        System.out.println(m_msg);
+        if (this.verbose > 0)
+            System.out.println(m_msg);
         return lastResult;
     }
 
