@@ -44,7 +44,7 @@ public class XNTupleFuncsTafl
     @Override
     public int getNumSymmetries()
     {
-        return 6;
+        return 3;
     }
 
     @Override
