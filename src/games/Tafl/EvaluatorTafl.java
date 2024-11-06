@@ -23,11 +23,12 @@ public class EvaluatorTafl
     extends Evaluator
 {
 
-    private MaxNAgent maxNAgent = null;
     private final String logDir = "logs/Tafl/train";
-    private MCTSAgentT mctsAgent = null;
-    private final RandomAgent randomAgent = new RandomAgent("Random");
     private final double trainingThreshold = 0.8;
+
+    private MaxNAgent maxNAgent;
+    private MCTSAgentT mctsAgent;
+    private RandomAgent randomAgent;
     private PlayAgent playAgent;
 
     /**
@@ -58,6 +59,15 @@ public class EvaluatorTafl
         this.m_gb = gameBoard;
         this.playAgent = playAgent;
 
+        ParMCTS params = new ParMCTS();
+        int numIterExp = (Math.min(TaflConfig.BOARD_SIZE, 5) - 1);
+        params.setNumIter((int) Math.pow(10, numIterExp));
+        int treeDepth = TaflConfig.BOARD_SIZE * TaflConfig.BOARD_SIZE;
+        params.setTreeDepth(treeDepth);
+        mctsAgent = new MCTSAgentT("MCTS", new StateObserverTafl(), params);
+
+        randomAgent = new RandomAgent("Random");
+
         ParMaxN parM = new ParMaxN();
         parM.setMaxNDepth(10);
         parM.setMaxNUseHashmap(true);
@@ -86,13 +96,14 @@ public class EvaluatorTafl
         {
             tools.Utils.checkAndCreateFolder(logDir);
             logSB = new StringBuilder();
+            logSB.append("Evaluating agent " + pa.getName() + " " + getPrintString() + "\n");
             logSB.append("training_matches");
             logSB.append(",");
             logSB.append("result");
             logSB.append("\n");
             try
             {
-                logFile = new PrintWriter(logDir + "/" + getCurrentTimeStamp() + ".csv");
+                logFile = new PrintWriter(logDir + "/" + getCurrentTimeStamp() + " - " + pa.getName() + ".csv");
             }
             catch (FileNotFoundException e)
             {
@@ -105,9 +116,9 @@ public class EvaluatorTafl
         int numEpisodes = TaflConfig.EVAL_NUMEPISODES;
         result = switch (m_mode)
         {
-            case 0 -> competeAgainstMCTS(playAgent, numEpisodes);
-            case 1 -> competeAgainstRandom(playAgent);
-            case 2 -> competeAgainstMaxN(playAgent, numEpisodes);
+            case 0 -> competeAgainstMCTS(playAgent, numEpisodes, 0);
+            case 1 -> competeAgainstRandom(playAgent, 0);
+            case 2 -> competeAgainstMaxN(playAgent, numEpisodes, 0);
             default -> throw new RuntimeException("Invalid m_mode = " + m_mode);
         };
 
@@ -139,7 +150,7 @@ public class EvaluatorTafl
      * @param playAgent Agent to be evaluated
      * @return Percentage of games won on a scale of [0, 1] as double
      */
-    private double competeAgainstRandom(PlayAgent playAgent)
+    private double competeAgainstRandom(PlayAgent playAgent, int verbose)
     {
         ScoreTuple sc = XArenaFuncs.competeNPlayer(new PlayAgtVector(playAgent, randomAgent), 0, new StateObserverTafl(), 100, verbose, null, null, null, false);
         lastResult = sc.scTup[0];
@@ -157,7 +168,7 @@ public class EvaluatorTafl
      * @param playAgent Agent to be evaluated
      * @return Percentage of games won on a scale of [0, 1] as double
      */
-    private double competeAgainstMaxN(PlayAgent playAgent, int numEpisodes)
+    private double competeAgainstMaxN(PlayAgent playAgent, int numEpisodes, int verbose)
     {
         ScoreTuple sc = XArenaFuncs.competeNPlayer(new PlayAgtVector(playAgent, maxNAgent), 0, new StateObserverTafl(), numEpisodes, verbose, null, null, null, false);
         lastResult = sc.scTup[0];
@@ -176,15 +187,9 @@ public class EvaluatorTafl
      * @param numEpisodes number of episodes played during evaluation
      * @return a value in range [-1,1], depending on the rate of evaluation games won by the agent
      */
-    private double competeAgainstMCTS(PlayAgent playAgent, int numEpisodes)
+    private double competeAgainstMCTS(PlayAgent playAgent, int numEpisodes, int verbose)
     {
-        ParMCTS params = new ParMCTS();
-        int numIterExp = (Math.min(TaflConfig.BOARD_SIZE, 5) - 1);
-        params.setNumIter((int) Math.pow(10, numIterExp));
-        params.setTreeDepth(50);
-        mctsAgent = new MCTSAgentT("MCTS", new StateObserverTafl(), params);
-
-        ScoreTuple sc = XArenaFuncs.competeNPlayer(new PlayAgtVector(playAgent, mctsAgent), 0, new StateObserverTafl(), numEpisodes, 0, null, null, null, false);
+        ScoreTuple sc = XArenaFuncs.competeNPlayer(new PlayAgtVector(playAgent, mctsAgent), 0, new StateObserverTafl(), numEpisodes, verbose, null, null, null, false);
         lastResult = sc.scTup[0];
         m_msg = playAgent.getName() + ": " + this.getPrintString() + lastResult;
         if (this.verbose > 0)
