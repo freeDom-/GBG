@@ -196,12 +196,12 @@ public class StateObserverTafl
         TaflTile endTile = board[endX][endY];
         if (startTile.getPlayer() != currentPlayer)
         {
-            System.out.println("Token on tile (" + startX + ", " + startY + ") does not belong to the player " + currentPlayer + ".");
+            System.out.println("Token on tile " + startTile.getCoords() + " does not belong to the player " + currentPlayer + ".");
             return;
         }
         if (endTile.getPlayer() != TaflUtils.PLAYER_NONE)
         {
-            System.out.println("Token on tile (" + startX + ", " + startY + ") is not empty.");
+            System.out.println("Token on tile " + startTile.getCoords() + " is not empty.");
             return;
         }
         endTile.setPlayer(currentPlayer);
