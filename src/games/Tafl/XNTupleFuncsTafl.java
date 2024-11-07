@@ -202,8 +202,9 @@ public class XNTupleFuncsTafl
 
     /**
      * Rotates a board vector by a given rotation
+     *
      * @param boardVector The vector representing the game board
-     * @param rotation The rotation direction
+     * @param rotation    The rotation direction
      * @return the resulting board vector
      */
     private BoardVector rotateBoard(BoardVector boardVector, Rotation rotation)
@@ -234,6 +235,8 @@ public class XNTupleFuncsTafl
                 }
             }
         }
+
+        return new BoardVector(rotatedVector);
     }
 
     private enum Axis
