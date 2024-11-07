@@ -32,4 +32,6 @@ public class TaflConfig
     static boolean RULE_WHITE_LOSES_ON_SURROUND = false;
     static boolean RULE_SHIELDWALL_CAPTURE = false;
     static boolean RULE_WHITE_LOSES_ON_REPETITIONS = false;
+    static boolean RULE_NO_SPECIAL_TILES = false;
+    static boolean RULE_EASY_KING_ESCAPE = false;
 }

@@ -102,6 +102,7 @@ public class StateObserverTafl
 
         int[][] board = switch (TaflConfig.BOARD_SIZE)
         {
+            case 5 -> TaflUtils.startBoard5;
             case 7 -> TaflUtils.startBoard7;
             case 9 -> TaflUtils.startBoard9;
             case 11 -> TaflUtils.startBoard11;

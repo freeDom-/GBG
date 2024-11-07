@@ -25,11 +25,6 @@ public class ArenaTafl
         return "Tafl";
     }
 
-    public static int getBoardSize()
-    {
-        return TaflConfig.BOARD_SIZE;
-    }
-
     public static void setBoardSize(int value)
     {
         TaflConfig.BOARD_SIZE = value;
@@ -38,32 +33,41 @@ public class ArenaTafl
 
         switch (value)
         {
+            case 5:
+                setRuleHardKingCapture(false);
+                setRuleWhiteLosesOnSurround(false);
+                setRuleShieldwallCapture(false);
+                setRuleWhiteLosesOnRepetitions(false);
+                setRuleNoSpecialTiles(true);
+                setEasyKingEscape(true);
+                break;
             case 7:
                 setRuleHardKingCapture(false);
                 setRuleWhiteLosesOnSurround(false);
                 setRuleShieldwallCapture(false);
                 setRuleWhiteLosesOnRepetitions(false);
+                setRuleNoSpecialTiles(false);
+                setEasyKingEscape(false);
                 break;
             case 9:
                 setRuleHardKingCapture(false);
                 setRuleWhiteLosesOnSurround(false);
                 setRuleShieldwallCapture(false);
                 setRuleWhiteLosesOnRepetitions(false);
+                setRuleNoSpecialTiles(false);
+                setEasyKingEscape(false);
                 break;
             case 11:
                 setRuleHardKingCapture(true);
                 setRuleWhiteLosesOnSurround(true);
                 setRuleShieldwallCapture(true);
                 setRuleWhiteLosesOnRepetitions(true);
+                setRuleNoSpecialTiles(false);
+                setEasyKingEscape(false);
                 break;
             default:
                 throw new RuntimeException("Invalid board size " + value);
         }
-    }
-
-    public static boolean getRuleHardKingCapture()
-    {
-        return TaflConfig.RULE_HARD_KING_CAPTURE;
     }
 
     public static void setRuleHardKingCapture(boolean value)
@@ -71,19 +75,9 @@ public class ArenaTafl
         TaflConfig.RULE_HARD_KING_CAPTURE = value;
     }
 
-    public static boolean getRuleWhiteLosesOnSurround()
-    {
-        return TaflConfig.RULE_WHITE_LOSES_ON_SURROUND;
-    }
-
     public static void setRuleWhiteLosesOnSurround(boolean value)
     {
         TaflConfig.RULE_WHITE_LOSES_ON_SURROUND = value;
-    }
-
-    public static boolean getRuleShieldwallCapture()
-    {
-        return TaflConfig.RULE_SHIELDWALL_CAPTURE;
     }
 
     public static void setRuleShieldwallCapture(boolean value)
@@ -91,14 +85,18 @@ public class ArenaTafl
         TaflConfig.RULE_SHIELDWALL_CAPTURE = value;
     }
 
-    public static boolean getRuleWhiteLosesOnRepetitions()
-    {
-        return TaflConfig.RULE_WHITE_LOSES_ON_REPETITIONS;
-    }
-
     public static void setRuleWhiteLosesOnRepetitions(boolean value)
     {
         TaflConfig.RULE_WHITE_LOSES_ON_REPETITIONS = value;
+    }
+
+    public static void setRuleNoSpecialTiles(boolean value)
+    {
+        TaflConfig.RULE_NO_SPECIAL_TILES = value;
+    }
+
+    public static void setEasyKingEscape(boolean value) {
+        TaflConfig.RULE_EASY_KING_ESCAPE = value;
     }
 
     @Override

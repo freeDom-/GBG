@@ -406,7 +406,7 @@ public class GBGLaunch extends SetupGBG {
             case "Tafl":
                 scaPar0_L.setText("Board Size");
                 scaPar0_L.setToolTipText("Size of the board");
-                setScaPar0List(new String[]{"7 (Brandub)", "9 (Tablut)", "11 (Hnefatafl)"});
+                setScaPar0List(new String[]{"5 (Simple Tafl)", "7 (Brandub)", "9 (Tablut)", "11 (Hnefatafl)"});
                 choiceScaPar0.setSelectedItem("7 (Brandub)");
                 break;
             case "2048":

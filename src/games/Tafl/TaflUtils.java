@@ -8,6 +8,14 @@ import java.util.ArrayList;
 public class TaflUtils
 {
 
+    enum Direction
+    {
+        LEFT,
+        RIGHT,
+        TOP,
+        BOTTOM
+    }
+
     public static final int PLAYER_NONE = -1; // Beginning player
     public static final int PLAYER_BLACK = 0; // Beginning player
     public static final int PLAYER_WHITE = 1;
@@ -16,6 +24,14 @@ public class TaflUtils
     public static final int BLACK_TOKEN = 1;
     public static final int WHITE_TOKEN = 2;
     public static final int KING = 3;
+
+    static final int[][] startBoard5 = new int[][] {
+        {1, 0, 1, 0, 1},
+        {0, 0, 2, 0, 0},
+        {1, 2, 3, 2, 1},
+        {0, 0, 2, 0, 0},
+        {1, 0, 1, 0, 1}
+    };
 
     static final int[][] startBoard7 = new int[][] {
         {0, 0, 0, 1, 0, 0, 0},
@@ -53,6 +69,12 @@ public class TaflUtils
         {0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0}
     };
 
+    /**
+     * Checks if a tile is on one of the four corners of the game board
+     *
+     * @param tile
+     * @return true if a tile is on the corner, false otherwise
+     */
     static boolean isTileCorner(TaflTile tile)
     {
         Point coords = tile.getCoords();
@@ -60,12 +82,37 @@ public class TaflUtils
                coords.x == TaflConfig.BOARD_SIZE - 1 && coords.y == 0 || coords.x == TaflConfig.BOARD_SIZE - 1 && coords.y == TaflConfig.BOARD_SIZE - 1;
     }
 
+    /**
+     * Checks if a tile is on the edge of the game board
+     *
+     * @param tile
+     * @return true if the tile is on the edge, false otherwise
+     */
+    static boolean isTileEdge(TaflTile tile)
+    {
+        Point coords = tile.getCoords();
+        return coords.x == 0 || coords.x == TaflConfig.BOARD_SIZE - 1 ||
+               coords.y == 0 || coords.y == TaflConfig.BOARD_SIZE - 1;
+    }
+
+    /**
+     * Checks if a tile is the throne
+     *
+     * @param tile
+     * @return true if the tile is the throne, false otherwise
+     */
     static boolean isTileThrone(TaflTile tile)
     {
         Point coords = tile.getCoords();
         return coords.x == TaflConfig.BOARD_SIZE / 2 && coords.y == TaflConfig.BOARD_SIZE / 2;
     }
 
+    /**
+     * Checks if a tile is next to the throne
+     *
+     * @param tile
+     * @return true if the tile is next to the throne, false otherwise
+     */
     static boolean isTileNextToThrone(TaflTile tile)
     {
         Point coords = tile.getCoords();
@@ -87,14 +134,29 @@ public class TaflUtils
         return (x >= 0 && x < TaflConfig.BOARD_SIZE) && (y >= 0 && y < TaflConfig.BOARD_SIZE);
     }
 
+    /**
+     * Checks if a tile is hostile for a player
+     *
+     * @param tile
+     * @param player
+     * @return true if the tile is hostile, false otherwise
+     */
     static boolean isTileHostile(TaflTile tile, int player)
     {
-        boolean checkHostileThrone = isTileThrone(tile) && (player == PLAYER_BLACK || tile.getToken() == EMPTY);
         boolean checkEnemy = player == PLAYER_BLACK && tile.getPlayer() == PLAYER_WHITE || player == PLAYER_WHITE && tile.getPlayer() == PLAYER_BLACK;
+        boolean checkCorner = !TaflConfig.RULE_NO_SPECIAL_TILES && isTileCorner(tile);
+        boolean checkHostileThrone = !TaflConfig.RULE_NO_SPECIAL_TILES && isTileThrone(tile) && (player == PLAYER_BLACK || tile.getToken() == EMPTY);
 
-        return isTileCorner(tile) || checkHostileThrone || checkEnemy;
+        return checkEnemy || checkCorner || checkHostileThrone;
     }
 
+    /**
+     * Checks if the game has a winner
+     *
+     * @param board
+     * @param lastMovedToken
+     * @return Types.WINNER.PLAYER_WINS if the game is won, null if there is no winner
+     */
     static Types.WINNER getWinner(TaflTile[][] board, TaflTile lastMovedToken)
     {
         if (lastMovedToken == null)
@@ -103,31 +165,51 @@ public class TaflUtils
             return null;
         }
         // King escaped
-        if (lastMovedToken.getToken() == KING && isTileCorner(lastMovedToken))
+        if (isKingEscaped(lastMovedToken))
         {
             return Types.WINNER.PLAYER_WINS;
         }
         // King captured
-        if (lastMovedToken.getPlayer() == PLAYER_BLACK)
+        if (isKingCaptured(board, lastMovedToken))
         {
-            if (isKingCaptured(board, lastMovedToken))
-            {
-                return Types.WINNER.PLAYER_WINS;
-            }
+            return Types.WINNER.PLAYER_WINS;
         }
         // TODO: Add other win conditions
         return null;
     }
 
+    /**
+     * Checks if the king is escaped
+     *
+     * @param lastMovedToken
+     * @return true if the king is escaped, false otherwise
+     */
+    static boolean isKingEscaped(TaflTile lastMovedToken)
+    {
+        return lastMovedToken.getToken() == KING && (isTileCorner(lastMovedToken) || TaflConfig.RULE_EASY_KING_ESCAPE && isTileEdge(lastMovedToken));
+    }
+
+    /**
+     * Checks if the king is captured
+     *
+     * @param board
+     * @param lastMovedToken
+     * @return true if the king is captured, false otherwise
+     */
     static boolean isKingCaptured(TaflTile[][] board, TaflTile lastMovedToken)
     {
+        if (lastMovedToken.getPlayer() == PLAYER_BLACK)
+        {
+            return false;
+        }
+
         ArrayList<TaflTile> neighbors = getNeighbors(board, lastMovedToken);
         for (TaflTile neighbor : neighbors)
         {
             if (neighbor.getToken() == KING)
             {
                 TaflTile king = neighbor;
-                if (isTileThrone(king) || isTileNextToThrone(king) || TaflConfig.RULE_HARD_KING_CAPTURE)
+                if (!TaflConfig.RULE_NO_SPECIAL_TILES && (isTileThrone(king) || isTileNextToThrone(king)) || TaflConfig.RULE_HARD_KING_CAPTURE)
                 {
                     ArrayList<TaflTile> kingsNeighbors = getNeighbors(board, king);
                     for (TaflTile kingsNeighbor : kingsNeighbors)
@@ -160,6 +242,13 @@ public class TaflUtils
         return false;
     }
 
+    /**
+     * Get all captures for a move
+     *
+     * @param board
+     * @param lastMovedToken
+     * @return a list with the captured tokens
+     */
     static ArrayList<TaflTile> getCaptures(TaflTile[][] board, TaflTile lastMovedToken)
     {
         ArrayList<TaflTile> captures = new ArrayList<>();
@@ -185,10 +274,16 @@ public class TaflUtils
                 }
             }
         }
-
         return captures;
     }
 
+    /**
+     * Get all neighbors for a tile
+     *
+     * @param board
+     * @param tile
+     * @return a list with the tiles neighbors
+     */
     static ArrayList<TaflTile> getNeighbors(TaflTile[][] board, TaflTile tile)
     {
         ArrayList<TaflTile> neighbors = new ArrayList<>();
@@ -239,6 +334,12 @@ public class TaflUtils
         }
     }
 
+    /**
+     * Get the start and end points of an action
+     *
+     * @param actionNumber
+     * @return an array containing the start and the end point
+     */
     static Point[] getMoveFromActionNumber(int actionNumber)
     {
         Point start, end;
@@ -258,56 +359,67 @@ public class TaflUtils
         return new Point[] {start, end};
     }
 
+    /**
+     * Get all available move targets for a token
+     *
+     * @param board
+     * @param token
+     * @return a list containing all available move targets
+     */
     static ArrayList<Point> generateMovesForToken(TaflTile[][] board, TaflTile token)
     {
-        ArrayList<Point> targets = new ArrayList<>();
-        Point coords = token.getCoords();
-        int x = coords.x - 1;
-        int y = coords.y;
-        while (TaflUtils.isValidTile(x, y) && board[x][y].getToken() == EMPTY)
+        ArrayList<Point> moveTargets = new ArrayList<>();
+
+        moveTargets.addAll(generateMovesForDirection(board, token, Direction.LEFT));
+        moveTargets.addAll(generateMovesForDirection(board, token, Direction.RIGHT));
+        moveTargets.addAll(generateMovesForDirection(board, token, Direction.TOP));
+        moveTargets.addAll(generateMovesForDirection(board, token, Direction.BOTTOM));
+
+        return moveTargets;
+    }
+
+    /**
+     * Generate all available move targets for a token for a direction
+     *
+     * @param board
+     * @param token
+     * @param direction
+     * @return a list containing all available move targets for the direction
+     */
+    private static ArrayList<Point> generateMovesForDirection(TaflTile[][] board, TaflTile token, Direction direction)
+    {
+        ArrayList<Point> moveTargets = new ArrayList<>();
+        int xStep = 0;
+        int yStep = 0;
+        switch (direction)
         {
-            TaflTile tile = board[x][y];
-            if (token.getToken() == KING || (!isTileCorner(tile) && !isTileThrone(tile)))
-            {
-                targets.add(new Point(x, y));
-            }
-            x--;
-        }
-        x = coords.x + 1;
-        y = coords.y;
-        while (TaflUtils.isValidTile(x, y) && board[x][y].getToken() == EMPTY)
-        {
-            TaflTile tile = board[x][y];
-            if (token.getToken() == KING || (!isTileCorner(tile) && !isTileThrone(tile)))
-            {
-                targets.add(new Point(x, y));
-            }
-            x++;
-        }
-        x = coords.x;
-        y = coords.y - 1;
-        while (TaflUtils.isValidTile(x, y) && board[x][y].getToken() == EMPTY)
-        {
-            TaflTile tile = board[x][y];
-            if (token.getToken() == KING || (!isTileCorner(tile) && !isTileThrone(tile)))
-            {
-                targets.add(new Point(x, y));
-            }
-            y--;
-        }
-        x = coords.x;
-        y = coords.y + 1;
-        while (TaflUtils.isValidTile(x, y) && board[x][y].getToken() == EMPTY)
-        {
-            TaflTile tile = board[x][y];
-            if (token.getToken() == KING || (!isTileCorner(tile) && !isTileThrone(tile)))
-            {
-                targets.add(new Point(x, y));
-            }
-            y++;
+            case LEFT:
+                xStep = -1;
+                break;
+            case RIGHT:
+                xStep = 1;
+                break;
+            case TOP:
+                yStep = -1;
+                break;
+            case BOTTOM:
+                yStep = 1;
+                break;
         }
 
-        return targets;
+        int x = token.getCoords().x + xStep;
+        int y = token.getCoords().y + yStep;
+        while (TaflUtils.isValidTile(x, y) && board[x][y].getToken() == EMPTY)
+        {
+            TaflTile tile = board[x][y];
+            if (TaflConfig.RULE_NO_SPECIAL_TILES || token.getToken() == KING || (!isTileCorner(tile) && !isTileThrone(tile)))
+            {
+                moveTargets.add(new Point(x, y));
+            }
+            x = x + xStep;
+            y = y + yStep;
+        }
+        return moveTargets;
     }
 
     /**
@@ -333,11 +445,23 @@ public class TaflUtils
         return boardVector;
     }
 
+    /**
+     * Converts a point to a cell value of the board
+     *
+     * @param p
+     * @return the number representation of the point
+     */
     static int pointToCell(Point p)
     {
         return p.x * TaflConfig.BOARD_SIZE + p.y;
     }
 
+    /**
+     * Converts a cell value of the board to a point
+     *
+     * @param position
+     * @return the point representation of the cell
+     */
     static Point cellToPoint(int position)
     {
         int x = Math.floorDiv(position, TaflConfig.BOARD_SIZE);
@@ -345,6 +469,15 @@ public class TaflUtils
         return new Point(x, y);
     }
 
+    /**
+     * Converts a mouse position to a point of the game grid.
+     * This function can be used to get the token at the mouse position.
+     *
+     * @param mx
+     * @param my
+     * @param boardSize
+     * @return the point representation of the mouse position
+     */
     static Point mousePositionToPoint(int mx, int my, int boardSize)
     {
         Point p = new Point(-1, -1);
