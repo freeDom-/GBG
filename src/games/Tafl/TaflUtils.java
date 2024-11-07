@@ -72,7 +72,7 @@ public class TaflUtils
     /**
      * Checks if a tile is on one of the four corners of the game board
      *
-     * @param tile
+     * @param tile The tile on the game board
      * @return true if a tile is on the corner, false otherwise
      */
     static boolean isTileCorner(TaflTile tile)
@@ -85,7 +85,7 @@ public class TaflUtils
     /**
      * Checks if a tile is on the edge of the game board
      *
-     * @param tile
+     * @param tile The tile on the game board
      * @return true if the tile is on the edge, false otherwise
      */
     static boolean isTileEdge(TaflTile tile)
@@ -98,7 +98,7 @@ public class TaflUtils
     /**
      * Checks if a tile is the throne
      *
-     * @param tile
+     * @param tile The tile on the game board
      * @return true if the tile is the throne, false otherwise
      */
     static boolean isTileThrone(TaflTile tile)
@@ -110,7 +110,7 @@ public class TaflUtils
     /**
      * Checks if a tile is next to the throne
      *
-     * @param tile
+     * @param tile The tile on the game board
      * @return true if the tile is next to the throne, false otherwise
      */
     static boolean isTileNextToThrone(TaflTile tile)
@@ -127,7 +127,7 @@ public class TaflUtils
      *
      * @param x index 1
      * @param y index 2
-     * @return True or False, depending on if the tile exists
+     * @return true if the tile exists, false otherwise
      */
     public static boolean isValidTile(int x, int y)
     {
@@ -137,8 +137,8 @@ public class TaflUtils
     /**
      * Checks if a tile is hostile for a player
      *
-     * @param tile
-     * @param player
+     * @param tile   The tile on the game board
+     * @param player The player
      * @return true if the tile is hostile, false otherwise
      */
     static boolean isTileHostile(TaflTile tile, int player)
@@ -153,8 +153,8 @@ public class TaflUtils
     /**
      * Checks if the game has a winner
      *
-     * @param board
-     * @param lastMovedToken
+     * @param board          The game board
+     * @param lastMovedToken The last moved token
      * @return Types.WINNER.PLAYER_WINS if the game is won, null if there is no winner
      */
     static Types.WINNER getWinner(TaflTile[][] board, TaflTile lastMovedToken)
@@ -181,7 +181,7 @@ public class TaflUtils
     /**
      * Checks if the king is escaped
      *
-     * @param lastMovedToken
+     * @param lastMovedToken The last moved token
      * @return true if the king is escaped, false otherwise
      */
     static boolean isKingEscaped(TaflTile lastMovedToken)
@@ -192,8 +192,8 @@ public class TaflUtils
     /**
      * Checks if the king is captured
      *
-     * @param board
-     * @param lastMovedToken
+     * @param board          The game board
+     * @param lastMovedToken The last moved token
      * @return true if the king is captured, false otherwise
      */
     static boolean isKingCaptured(TaflTile[][] board, TaflTile lastMovedToken)
@@ -245,8 +245,8 @@ public class TaflUtils
     /**
      * Get all captures for a move
      *
-     * @param board
-     * @param lastMovedToken
+     * @param board          The game board
+     * @param lastMovedToken The last moved token
      * @return a list with the captured tokens
      */
     static ArrayList<TaflTile> getCaptures(TaflTile[][] board, TaflTile lastMovedToken)
@@ -280,8 +280,8 @@ public class TaflUtils
     /**
      * Get all neighbors for a tile
      *
-     * @param board
-     * @param tile
+     * @param board The game board
+     * @param tile  The tile on the game board
      * @return a list with the tiles neighbors
      */
     static ArrayList<TaflTile> getNeighbors(TaflTile[][] board, TaflTile tile)
@@ -313,8 +313,8 @@ public class TaflUtils
      * Converts a move from start position to end position to an action number
      * (0-14 representing the respective position in the row or column)
      *
-     * @param start position
-     * @param end   position
+     * @param start Start position of the move
+     * @param end   Target position of the move
      * @return number representation for an action
      */
     static int getActionNumberFromMove(Point start, Point end)
@@ -337,7 +337,7 @@ public class TaflUtils
     /**
      * Get the start and end points of an action
      *
-     * @param actionNumber
+     * @param actionNumber Number representation for an action
      * @return an array containing the start and the end point
      */
     static Point[] getMoveFromActionNumber(int actionNumber)
@@ -362,8 +362,8 @@ public class TaflUtils
     /**
      * Get all available move targets for a token
      *
-     * @param board
-     * @param token
+     * @param board The game board
+     * @param token The token on the game board
      * @return a list containing all available move targets
      */
     static ArrayList<Point> generateMovesForToken(TaflTile[][] board, TaflTile token)
@@ -381,9 +381,9 @@ public class TaflUtils
     /**
      * Generate all available move targets for a token for a direction
      *
-     * @param board
-     * @param token
-     * @param direction
+     * @param board     The game board
+     * @param token     The token on the game board
+     * @param direction The direction to check
      * @return a list containing all available move targets for the direction
      */
     private static ArrayList<Point> generateMovesForDirection(TaflTile[][] board, TaflTile token, Direction direction)
@@ -429,8 +429,8 @@ public class TaflUtils
      * Top tile on board (coordinates: n, 0) is the (n^2 - n + 1)-th element.
      * Rightmost tile on board (coordinates: n, n) is the (n^2)-th element.
      *
-     * @param board
-     * @return
+     * @param board The game board
+     * @return the vector representation of the game board
      */
     static TaflTile[] boardToVector(TaflTile[][] board)
     {
@@ -448,7 +448,7 @@ public class TaflUtils
     /**
      * Converts a point to a cell value of the board
      *
-     * @param p
+     * @param p The point containing coordinates of the game board
      * @return the number representation of the point
      */
     static int pointToCell(Point p)
@@ -459,7 +459,7 @@ public class TaflUtils
     /**
      * Converts a cell value of the board to a point
      *
-     * @param position
+     * @param position The number representation of a point on the game board
      * @return the point representation of the cell
      */
     static Point cellToPoint(int position)
@@ -473,9 +473,9 @@ public class TaflUtils
      * Converts a mouse position to a point of the game grid.
      * This function can be used to get the token at the mouse position.
      *
-     * @param mx
-     * @param my
-     * @param boardSize
+     * @param mx        Mouse position x
+     * @param my        Mouse position y
+     * @param boardSize The size of the game board defined by TaflConfig.BOARD_SIZE
      * @return the point representation of the mouse position
      */
     static Point mousePositionToPoint(int mx, int my, int boardSize)
