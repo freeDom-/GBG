@@ -197,11 +197,11 @@ public class GameBoardTaflGui
 
         private Color getBackgroundColor(TaflTile tile)
         {
-            if (TaflUtils.isTileCorner(tile))
+            if (!TaflConfig.RULE_NO_SPECIAL_TILES && TaflUtils.isTileCorner(tile))
             {
                 return COLOR_CORNER;
             }
-            if (TaflUtils.isTileThrone(tile))
+            if (!TaflConfig.RULE_NO_SPECIAL_TILES && TaflUtils.isTileThrone(tile))
             {
                 return COLOR_THRONE;
             }
