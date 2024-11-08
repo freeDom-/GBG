@@ -198,7 +198,7 @@ public class TaflUtils
      */
     static boolean isKingCaptured(TaflTile[][] board, TaflTile lastMovedToken)
     {
-        if (lastMovedToken.getPlayer() == PLAYER_BLACK)
+        if (lastMovedToken.getPlayer() == PLAYER_WHITE)
         {
             return false;
         }

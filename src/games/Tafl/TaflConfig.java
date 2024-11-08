@@ -26,7 +26,7 @@ public class TaflConfig
      *
      * @see EvaluatorTafl
      */
-    final static int EVAL_NUMEPISODES = 3; // 5; //10;
+    final static int EVAL_NUMEPISODES = 5; //3; // 5; //10;
 
     static boolean RULE_HARD_KING_CAPTURE = false;
     static boolean RULE_WHITE_LOSES_ON_SURROUND = false;
