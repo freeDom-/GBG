@@ -40,6 +40,7 @@ public class ArenaTafl
                 setRuleWhiteLosesOnRepetitions(false);
                 setRuleNoSpecialTiles(true);
                 setEasyKingEscape(true);
+                setStartPlayer(TaflUtils.PLAYER_WHITE);
                 break;
             case 7:
                 setRuleHardKingCapture(false);
@@ -48,6 +49,7 @@ public class ArenaTafl
                 setRuleWhiteLosesOnRepetitions(false);
                 setRuleNoSpecialTiles(false);
                 setEasyKingEscape(false);
+                setStartPlayer(TaflUtils.PLAYER_BLACK);
                 break;
             case 9:
                 setRuleHardKingCapture(false);
@@ -56,6 +58,7 @@ public class ArenaTafl
                 setRuleWhiteLosesOnRepetitions(false);
                 setRuleNoSpecialTiles(false);
                 setEasyKingEscape(false);
+                setStartPlayer(TaflUtils.PLAYER_BLACK);
                 break;
             case 11:
                 setRuleHardKingCapture(true);
@@ -64,6 +67,7 @@ public class ArenaTafl
                 setRuleWhiteLosesOnRepetitions(true);
                 setRuleNoSpecialTiles(false);
                 setEasyKingEscape(false);
+                setStartPlayer(TaflUtils.PLAYER_BLACK);
                 break;
             default:
                 throw new RuntimeException("Invalid board size " + value);
@@ -95,8 +99,14 @@ public class ArenaTafl
         TaflConfig.RULE_NO_SPECIAL_TILES = value;
     }
 
-    public static void setEasyKingEscape(boolean value) {
+    public static void setEasyKingEscape(boolean value)
+    {
         TaflConfig.RULE_EASY_KING_ESCAPE = value;
+    }
+
+    public static void setStartPlayer(int value)
+    {
+        TaflConfig.START_PLAYER = value;
     }
 
     @Override

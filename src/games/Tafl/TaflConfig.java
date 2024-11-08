@@ -7,6 +7,13 @@ public class TaflConfig
     final static double REWARD_POSITIVE = 1.0;
 
     /**
+     * Number of episodes to play when evaluating an agent
+     *
+     * @see EvaluatorTafl
+     */
+    final static int EVAL_NUMEPISODES = 5; //3; // 5; //10;
+
+    /**
      * Length of one side of the game board in tiles
      */
     public static int BOARD_SIZE = 7;
@@ -21,12 +28,7 @@ public class TaflConfig
     static int UI_TILE_SIZE = 64;
     static int UI_OFFSET = 0; //UI_TILE_SIZE / 4;
 
-    /**
-     * Number of episodes to play when evaluating an agent
-     *
-     * @see EvaluatorTafl
-     */
-    final static int EVAL_NUMEPISODES = 5; //3; // 5; //10;
+    static int START_PLAYER = TaflUtils.PLAYER_BLACK;
 
     static boolean RULE_HARD_KING_CAPTURE = false;
     static boolean RULE_WHITE_LOSES_ON_SURROUND = false;

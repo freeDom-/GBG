@@ -26,7 +26,8 @@ public class StateObserverTafl
     public StateObserverTafl()
     {
         board = defaultGameBoard();
-        currentPlayer = TaflUtils.PLAYER_BLACK;
+
+        currentPlayer = TaflConfig.START_PLAYER;
         setAvailableActions();
     }
 

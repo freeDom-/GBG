@@ -96,7 +96,8 @@ public class EvaluatorTafl
         {
             tools.Utils.checkAndCreateFolder(logDir);
             logSB = new StringBuilder();
-            logSB.append("Evaluating agent " + pa.getName() + " " + getPrintString() + "\n");
+            logSB.append("Evaluating agent ").append(pa.getName()).append(" for ").append(pa.getMaxGameNum()).append(" ").append(getPrintString()).append("\n");
+            logSB.append("Training params: ").append(pa.getParOther());
             logSB.append("training_matches");
             logSB.append(",");
             logSB.append("result");
