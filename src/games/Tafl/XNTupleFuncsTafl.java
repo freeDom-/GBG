@@ -32,7 +32,7 @@ public class XNTupleFuncsTafl
     @Override
     public int getNumPositionValues()
     {
-        return 4;
+        return TaflUtils.NUM_POSITION_VALUES;
     }
 
     @Override
@@ -128,15 +128,15 @@ public class XNTupleFuncsTafl
         {
             case 1:
                 tuples = new int[TaflConfig.BOARD_SIZE * 2][TaflConfig.BOARD_SIZE];
-                for (int i = 0; i < TaflConfig.BOARD_SIZE; i++)
+                for (int y = 0; y < TaflConfig.BOARD_SIZE; y++)
                 {
-                    for (int j = 0; j < TaflConfig.BOARD_SIZE; j++)
+                    for (int x = 0; x < TaflConfig.BOARD_SIZE; x++)
                     {
-                        int position = i * TaflConfig.BOARD_SIZE + j;
-                        tuples[i][j] = position;
+                        int position = y * TaflConfig.BOARD_SIZE + x;
+                        tuples[x][y] = position;
 
-                        position = j * TaflConfig.BOARD_SIZE + i;
-                        tuples[i + TaflConfig.BOARD_SIZE][j] = position;
+                        position = x * TaflConfig.BOARD_SIZE + y;
+                        tuples[x + TaflConfig.BOARD_SIZE][y] = position;
                     }
                 }
                 break;
@@ -213,24 +213,24 @@ public class XNTupleFuncsTafl
 
         if (rotation == Rotation.CLOCKWISE)
         {
-            for (int i = 0; i < TaflConfig.BOARD_SIZE; i++)
+            for (int y = 0; y < TaflConfig.BOARD_SIZE; y++)
             {
-                for (int j = TaflConfig.BOARD_SIZE - 1; j >= 0; j--)
+                for (int x = TaflConfig.BOARD_SIZE - 1; x >= 0; x--)
                 {
-                    int targetPos = i * TaflConfig.BOARD_SIZE + Math.abs(j - (TaflConfig.BOARD_SIZE - 1));
-                    int pos = j * TaflConfig.BOARD_SIZE + i;
+                    int targetPos = y * TaflConfig.BOARD_SIZE + Math.abs(x - (TaflConfig.BOARD_SIZE - 1));
+                    int pos = x * TaflConfig.BOARD_SIZE + y;
                     rotatedVector[targetPos] = boardVector.bvec[pos];
                 }
             }
         }
         else
         {
-            for (int i = TaflConfig.BOARD_SIZE - 1; i >= 0; i--)
+            for (int y = TaflConfig.BOARD_SIZE - 1; y >= 0; y--)
             {
-                for (int j = 0; j < TaflConfig.BOARD_SIZE; j++)
+                for (int x = 0; x < TaflConfig.BOARD_SIZE; x++)
                 {
-                    int targetPos = Math.abs(i - (TaflConfig.BOARD_SIZE - 1)) * TaflConfig.BOARD_SIZE + j;
-                    int pos = j * TaflConfig.BOARD_SIZE + i;
+                    int targetPos = Math.abs(y - (TaflConfig.BOARD_SIZE - 1)) * TaflConfig.BOARD_SIZE + x;
+                    int pos = x * TaflConfig.BOARD_SIZE + y;
                     rotatedVector[targetPos] = boardVector.bvec[pos];
                 }
             }
@@ -261,14 +261,14 @@ public class XNTupleFuncsTafl
             //Example for BOARD_SIZE=3:
             //Before: 1,2,3, 4,5,6, 7,8,9
             //After:  3,2,1, 6,5,4, 9,8,7
-            for (int i = 0; i < TaflConfig.BOARD_SIZE; i++)
+            for (int y = 0; y < TaflConfig.BOARD_SIZE; y++)
             {
                 int[] tmp = new int[TaflConfig.BOARD_SIZE];
-                for (int j = 0; j < ((TaflConfig.BOARD_SIZE + 1) / 2); j++)
+                for (int x = 0; x < ((TaflConfig.BOARD_SIZE + 1) / 2); x++)
                 {
-                    tmp[j] = mirroredVector[i * TaflConfig.BOARD_SIZE + j];
-                    mirroredVector[i * TaflConfig.BOARD_SIZE + j] = mirroredVector[i * TaflConfig.BOARD_SIZE + TaflConfig.BOARD_SIZE - j - 1];
-                    mirroredVector[i * TaflConfig.BOARD_SIZE + TaflConfig.BOARD_SIZE - j - 1] = tmp[j];
+                    tmp[x] = mirroredVector[y * TaflConfig.BOARD_SIZE + x];
+                    mirroredVector[y * TaflConfig.BOARD_SIZE + x] = mirroredVector[y * TaflConfig.BOARD_SIZE + TaflConfig.BOARD_SIZE - x - 1];
+                    mirroredVector[y * TaflConfig.BOARD_SIZE + TaflConfig.BOARD_SIZE - x - 1] = tmp[x];
                 }
             }
         }
@@ -278,14 +278,14 @@ public class XNTupleFuncsTafl
             //Example for BOARD_SIZE=3:
             //Before: 1,2,3, 4,5,6, 7,8,9
             //After:  7,8,9, 4,5,6, 1,2,3
-            for (int i = 0; i < ((TaflConfig.BOARD_SIZE + 1) / 2); i++)
+            for (int y = 0; y < ((TaflConfig.BOARD_SIZE + 1) / 2); y++)
             {
                 int[] tmp = new int[TaflConfig.BOARD_SIZE];
-                for (int j = 0; j < TaflConfig.BOARD_SIZE; j++)
+                for (int x = 0; x < TaflConfig.BOARD_SIZE; x++)
                 {
-                    tmp[j] = mirroredVector[i * TaflConfig.BOARD_SIZE + j];
-                    mirroredVector[i * TaflConfig.BOARD_SIZE + j] = mirroredVector[(TaflConfig.BOARD_SIZE - i - 1) * TaflConfig.BOARD_SIZE + j];
-                    mirroredVector[(TaflConfig.BOARD_SIZE - i - 1) * TaflConfig.BOARD_SIZE + j] = tmp[j];
+                    tmp[x] = mirroredVector[y * TaflConfig.BOARD_SIZE + x];
+                    mirroredVector[y * TaflConfig.BOARD_SIZE + x] = mirroredVector[(TaflConfig.BOARD_SIZE - y - 1) * TaflConfig.BOARD_SIZE + x];
+                    mirroredVector[(TaflConfig.BOARD_SIZE - y - 1) * TaflConfig.BOARD_SIZE + x] = tmp[x];
                 }
             }
         }

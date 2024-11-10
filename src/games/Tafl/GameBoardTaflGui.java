@@ -169,11 +169,11 @@ public class GameBoardTaflGui
             {
                 showValues = false;
             }
-            for (int i = 0; i < TaflConfig.BOARD_SIZE; i++)
+            for (int y = 0; y < TaflConfig.BOARD_SIZE; y++)
             {
-                for (int j = 0; j < TaflConfig.BOARD_SIZE; j++)
+                for (int x = 0; x < TaflConfig.BOARD_SIZE; x++)
                 {
-                    TaflTile tile = m_gb.m_so.getBoard()[i][j];
+                    TaflTile tile = m_gb.m_so.getBoard()[x][y];
                     Color cellColor = getBackgroundColor(tile);
                     TaflUtils.drawTile(tile, g2, cellColor, false);
                     if (showValues && !GRAYSCALE)

@@ -20,6 +20,7 @@ public class TaflUtils
     public static final int PLAYER_BLACK = 0; // Beginning player
     public static final int PLAYER_WHITE = 1;
 
+    public static final int NUM_POSITION_VALUES = 4;
     public static final int EMPTY = 0;
     public static final int BLACK_TOKEN = 1;
     public static final int WHITE_TOKEN = 2;
@@ -150,32 +151,79 @@ public class TaflUtils
         return checkEnemy || checkCorner || checkHostileThrone;
     }
 
+    static int getOtherPlayer(int player)
+    {
+        return switch (player)
+        {
+            case PLAYER_NONE -> PLAYER_NONE;
+            case PLAYER_BLACK -> PLAYER_WHITE;
+            case PLAYER_WHITE -> PLAYER_BLACK;
+            default -> throw new RuntimeException("Player number " + player + " outside allowed range 0..2");
+        };
+    }
+
     /**
      * Checks if the game has a winner
      *
      * @param board          The game board
      * @param lastMovedToken The last moved token
-     * @return Types.WINNER.PLAYER_WINS if the game is won, null if there is no winner
+     * @return the number representation of the player who won the game, -1 if there is no winner
      */
-    static Types.WINNER getWinner(TaflTile[][] board, TaflTile lastMovedToken)
+    static int getWinner(TaflTile[][] board, TaflTile[][] repeatedBoard, ArrayList<Types.ACTIONS> availableActions, TaflTile lastMovedToken)
     {
         if (lastMovedToken == null)
         {
             //System.out.println("lastMovedToken was null");
-            return null;
+            return PLAYER_NONE;
         }
         // King escaped
         if (isKingEscaped(lastMovedToken))
         {
-            return Types.WINNER.PLAYER_WINS;
+            return PLAYER_WHITE;
         }
         // King captured
         if (isKingCaptured(board, lastMovedToken))
         {
-            return Types.WINNER.PLAYER_WINS;
+            return PLAYER_BLACK;
+        }
+        // No more valid moves left
+        if (availableActions.isEmpty())
+        {
+            return getOtherPlayer(lastMovedToken.getPlayer());
+        }
+        // Repeated board position
+        if (isBoardPositionRepeated(board, repeatedBoard))
+        {
+            return getOtherPlayer(lastMovedToken.getPlayer());
         }
         // TODO: Add other win conditions
-        return null;
+        return PLAYER_NONE;
+    }
+
+    /**
+     * Checks if a board position is repeated
+     *
+     * @param board         The current game board
+     * @param repeatedBoard The previous game board to perform the repeated check against
+     * @return true if the position was repeated, false otherwise
+     */
+    static boolean isBoardPositionRepeated(TaflTile[][] board, TaflTile[][] repeatedBoard)
+    {
+        if (repeatedBoard[0][0] == null)
+        {
+            return false;
+        }
+        for (int y = 0; y < TaflConfig.BOARD_SIZE; y++)
+        {
+            for (int x = 0; x < TaflConfig.BOARD_SIZE; x++)
+            {
+                if (board[x][y].getToken() != repeatedBoard[x][y].getToken())
+                {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     /**
@@ -435,11 +483,11 @@ public class TaflUtils
     static TaflTile[] boardToVector(TaflTile[][] board)
     {
         TaflTile[] boardVector = new TaflTile[board.length * board.length];
-        for (int i = 0, k = 0; i < TaflConfig.BOARD_SIZE; i++)
+        for (int y = 0, i = 0; y < TaflConfig.BOARD_SIZE; y++)
         {
-            for (int j = 0; j < TaflConfig.BOARD_SIZE; j++, k++)
+            for (int x = 0; x < TaflConfig.BOARD_SIZE; x++, i++)
             {
-                boardVector[k] = board[i][j];
+                boardVector[i] = board[x][y];
             }
         }
         return boardVector;
@@ -483,19 +531,19 @@ public class TaflUtils
         Point p = new Point(-1, -1);
         if (mx >= 0 && my >= 0)
         {
-            for (int i = 0; i < boardSize; i++)
+            for (int x = 0; x < boardSize; x++)
             {
-                if ((i + 1) * TaflConfig.UI_TILE_SIZE >= mx)
+                if ((x + 1) * TaflConfig.UI_TILE_SIZE >= mx)
                 {
-                    p.x = i;
+                    p.x = x;
                     break;
                 }
             }
-            for (int j = 0; j < boardSize; j++)
+            for (int y = 0; y < boardSize; y++)
             {
-                if ((j + 1) * TaflConfig.UI_TILE_SIZE >= my)
+                if ((y + 1) * TaflConfig.UI_TILE_SIZE >= my)
                 {
-                    p.y = j;
+                    p.y = y;
                     break;
                 }
             }
@@ -506,17 +554,17 @@ public class TaflUtils
     /**
      * Creates a polygon object for the specified tile
      *
-     * @param i        first index
-     * @param j        second index
+     * @param x        first index
+     * @param y        second index
      * @param tileSize size in px of each tile side to side
      * @return Rectangle for specified tile
      */
-    public static Rectangle createRect(int i, int j, int tileSize)
+    public static Rectangle createRect(int x, int y, int tileSize)
     {
-        int x = i * tileSize;
-        int y = j * tileSize;
+        int tileX = x * tileSize;
+        int tileY = y * tileSize;
 
-        return new Rectangle(x, y, tileSize, tileSize);
+        return new Rectangle(tileX, tileY, tileSize, tileSize);
     }
 
     /**

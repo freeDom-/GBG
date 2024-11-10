@@ -23,12 +23,12 @@ public class TaflTile
     /**
      * Constructor for tiles that are not supposed to be drawn to the screen.
      *
-     * @param i first index in board array
-     * @param j second index in board array
+     * @param x first index in board array
+     * @param y second index in board array
      */
-    public TaflTile(int i, int j, int token)
+    public TaflTile(int x, int y, int token)
     {
-        coords = new Point(i, j);
+        coords = new Point(x, y);
         this.token = token;
         this.player = switch (token)
         {
@@ -137,6 +137,6 @@ public class TaflTile
     @Override
     public String toString()
     {
-        return "TaflTile [" + coords.x + ", " + coords.y + "]";
+        return "TaflTile [" + coords.x + ", " + coords.y + "]: " + token;
     }
 }

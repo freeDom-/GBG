@@ -1,9 +1,6 @@
 package games.Tafl;
 
 import games.Feature;
-import games.Hex.HexConfig;
-import games.Hex.HexTile;
-import games.Hex.HexUtils;
 import games.StateObservation;
 
 import java.io.Serial;
@@ -84,13 +81,16 @@ public class FeatureTafl
      * @param board  Current board array
      * @return A vector containing all the features described above
      */
-    public double[] createFeatureVector0(int player, TaflTile[][] board) {
+    public double[] createFeatureVector0(int player, TaflTile[][] board)
+    {
         double[] inputVector = new double[TaflConfig.TILE_COUNT + 1];
 
-        for (int i = 0; i < TaflConfig.BOARD_SIZE; i++) {
-            for (int j = 0; j < TaflConfig.BOARD_SIZE; j++) {
-                double v = board[i][j].getToken();
-                inputVector[i * TaflConfig.BOARD_SIZE + j] = v;
+        for (int y = 0; y < TaflConfig.BOARD_SIZE; y++)
+        {
+            for (int x = 0; x < TaflConfig.BOARD_SIZE; x++)
+            {
+                double v = board[y][x].getToken();
+                inputVector[y * TaflConfig.BOARD_SIZE + x] = v;
             }
         }
 

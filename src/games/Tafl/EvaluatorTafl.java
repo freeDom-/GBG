@@ -5,10 +5,7 @@ import controllers.MaxNAgent;
 import controllers.PlayAgent;
 import controllers.PlayAgtVector;
 import controllers.RandomAgent;
-import games.EvalResult;
-import games.Evaluator;
-import games.GameBoard;
-import games.XArenaFuncs;
+import games.*;
 import params.ParMCTS;
 import params.ParMaxN;
 import params.ParOther;
@@ -30,6 +27,7 @@ public class EvaluatorTafl
     private MCTSAgentT mctsAgent;
     private RandomAgent randomAgent;
     private PlayAgent playAgent;
+    private double bestResult = Double.MIN_VALUE;
 
     /**
      * logResults toggles logging of training progress to a csv file located in {@link #logDir}
@@ -97,11 +95,12 @@ public class EvaluatorTafl
             tools.Utils.checkAndCreateFolder(logDir);
             logSB = new StringBuilder();
             logSB.append("Evaluating agent ").append(pa.getName()).append(" for ").append(pa.getMaxGameNum()).append(" ").append(getPrintString()).append("\n");
-            logSB.append("Training params: ").append(pa.getParOther());
-            logSB.append("training_matches");
-            logSB.append(",");
-            logSB.append("result");
-            logSB.append("\n");
+            logSB.append("Training params: ").append("\n");
+            logSB.append("training_matches").append(",");
+            logSB.append("result").append(",");
+            logSB.append("num_learn_actions").append(",");
+            logSB.append("train_time_ms").append(",");
+            logSB.append("eval_time_ms").append("\n");
             try
             {
                 logFile = new PrintWriter(logDir + "/" + getCurrentTimeStamp() + " - " + pa.getName() + ".csv");
@@ -125,10 +124,11 @@ public class EvaluatorTafl
 
         if (logResults)
         {
-            logSB.append(playAgent.getGameNum());
-            logSB.append(",");
-            logSB.append(result);
-            logSB.append("\n");
+            logSB.append(playAgent.getGameNum()).append(",");
+            logSB.append(String.format("%.2f", result)).append(",");
+            logSB.append(playAgent.getNumLrnActions()).append(",");
+            logSB.append(playAgent.getDurationTrainingMs()).append(",");
+            logSB.append(playAgent.getDurationEvaluationMs()).append("\n");
             logFile.write(logSB.toString());
             logSB.delete(0, logSB.length());
             logFile.flush();
@@ -139,6 +139,15 @@ public class EvaluatorTafl
             {
                 logFile.close();
             }
+        }
+
+        ArenaTafl arena = (ArenaTafl) m_gb.getArena();
+        // Check if Arena Task State == TRAIN and save agent if certain score is reached
+        if (arena.taskState == Arena.Task.TRAIN && (result >= bestResult || playAgent.getGameNum() == playAgent.getMaxGameNum()))
+        {
+            String savePath = "agents/Tafl/" + TaflConfig.BOARD_SIZE + "/" + getCurrentTimeStamp() + " - " + pa.getName() + " - " + pa.getGameNum() + " - " + result;
+            arena.saveAgent(pa, savePath);
+            bestResult = result;
         }
 
         return new EvalResult(result, lastResult > trainingThreshold, m_msg, m_mode, trainingThreshold);
