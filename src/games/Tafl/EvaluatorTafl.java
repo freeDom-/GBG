@@ -27,7 +27,7 @@ public class EvaluatorTafl
     private MCTSAgentT mctsAgent;
     private RandomAgent randomAgent;
     private PlayAgent playAgent;
-    private double bestResult = Double.MIN_VALUE;
+    private double bestResult = Double.NEGATIVE_INFINITY;
 
     /**
      * logResults toggles logging of training progress to a csv file located in {@link #logDir}
@@ -122,10 +122,12 @@ public class EvaluatorTafl
             default -> throw new RuntimeException("Invalid m_mode = " + m_mode);
         };
 
+        String formattedResult = String.format("%.2f", result);
+
         if (logResults)
         {
             logSB.append(playAgent.getGameNum()).append(",");
-            logSB.append(String.format("%.2f", result)).append(",");
+            logSB.append(formattedResult).append(",");
             logSB.append(playAgent.getNumLrnActions()).append(",");
             logSB.append(playAgent.getDurationTrainingMs()).append(",");
             logSB.append(playAgent.getDurationEvaluationMs()).append("\n");
@@ -143,9 +145,9 @@ public class EvaluatorTafl
 
         ArenaTafl arena = (ArenaTafl) m_gb.getArena();
         // Check if Arena Task State == TRAIN and save agent if certain score is reached
-        if (arena.taskState == Arena.Task.TRAIN && (result >= bestResult || playAgent.getGameNum() == playAgent.getMaxGameNum()))
+        if (true || arena.taskState == Arena.Task.TRAIN && (result >= bestResult || playAgent.getGameNum() == playAgent.getMaxGameNum()))
         {
-            String savePath = "agents/Tafl/" + TaflConfig.BOARD_SIZE + "/" + getCurrentTimeStamp() + " - " + pa.getName() + " - " + pa.getGameNum() + " - " + result;
+            String savePath = "agents/Tafl/" + TaflConfig.BOARD_SIZE + "/" + getCurrentTimeStamp() + " - " + pa.getName() + " - " + pa.getGameNum() + " - " + formattedResult + ".agt.zip";
             arena.saveAgent(pa, savePath);
             bestResult = result;
         }
