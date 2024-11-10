@@ -79,6 +79,11 @@ public class StateObserverTafl
         return board;
     }
 
+    public TaflTile[][][] getLastBoards()
+    {
+        return lastBoards;
+    }
+
     /**
      * Set all tile values to the default (Double.NaN)
      */
