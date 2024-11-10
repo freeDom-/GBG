@@ -10,6 +10,7 @@ import params.ParMCTS;
 import params.ParMaxN;
 import params.ParOther;
 import tools.ScoreTuple;
+import tools.Types;
 
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
@@ -145,9 +146,12 @@ public class EvaluatorTafl
 
         ArenaTafl arena = (ArenaTafl) m_gb.getArena();
         // Check if Arena Task State == TRAIN and save agent if certain score is reached
-        if (true || arena.taskState == Arena.Task.TRAIN && (result >= bestResult || playAgent.getGameNum() == playAgent.getMaxGameNum()))
+        if (arena.taskState == Arena.Task.TRAIN && (result >= bestResult || playAgent.getGameNum() == playAgent.getMaxGameNum()))
         {
-            String savePath = "agents/Tafl/" + TaflConfig.BOARD_SIZE + "/" + getCurrentTimeStamp() + " - " + pa.getName() + " - " + pa.getGameNum() + " - " + formattedResult + ".agt.zip";
+            String gameDir = Types.GUI_DEFAULT_DIR_AGENT + "/" + arena.getGameName() + "/";
+            String subDir = arena.getGameBoard().getSubDir() + "/";
+            String fileName = pa.getName() + " " + pa.getGameNum() + " of " + pa.getMaxGameNum() + " " + formattedResult + ".agt.zip";
+            String savePath = gameDir + subDir + fileName;
             arena.saveAgent(pa, savePath);
             bestResult = result;
         }
