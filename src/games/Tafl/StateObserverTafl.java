@@ -200,8 +200,13 @@ public class StateObserverTafl
     @Override
     public void storeBestActionInfo(Types.ACTIONS_VT actBest)
     {
-        double[] valueTable = actBest.getVTable();
+        super.storeBestActionInfo(actBest);
+        storeBestActionInfo(actBest.getVTable());
+    }
 
+    public void storeBestActionInfo(double[] valueTable)
+    {
+        // Clear values
         for (int y = 0; y < TaflConfig.BOARD_SIZE; y++)
         {
             for (int x = 0; x < TaflConfig.BOARD_SIZE; x++)
@@ -209,7 +214,7 @@ public class StateObserverTafl
                 board[x][y].setValue(Double.NaN);
             }
         }
-
+        // Set values for tokens
         for (int i = 0; i < getNumAvailableActions(); i++)
         {
             double val = valueTable[i];
@@ -221,6 +226,37 @@ public class StateObserverTafl
             if (Double.isNaN(prevVal) || prevVal < val)
             {
                 board[x][y].setValue(val);
+            }
+        }
+    }
+
+    public void storeBestActionInfo(Point selectedToken)
+    {
+        double[] valueTable = storedActBest.getVTable();
+        if (selectedToken == null)
+        {
+            storeBestActionInfo(valueTable);
+        }
+        else
+        {
+            // Clear values
+            for (int y = 0; y < TaflConfig.BOARD_SIZE; y++)
+            {
+                for (int x = 0; x < TaflConfig.BOARD_SIZE; x++)
+                {
+                    board[x][y].setValue(Double.NaN);
+                }
+            }
+            // Set values for possible moves
+            for (int i = 0; i < getNumAvailableActions(); i++)
+            {
+                double val = valueTable[i];
+                int actionInt = getAction(i).toInt();
+                Point[] move = TaflUtils.getMoveFromActionNumber(actionInt);
+                if (move[0].x == selectedToken.x && move[0].y == selectedToken.y)
+                {
+                    board[move[1].x][move[1].y].setValue(val);
+                }
             }
         }
     }

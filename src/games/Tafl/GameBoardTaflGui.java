@@ -157,10 +157,6 @@ public class GameBoardTaflGui
         private void drawBoardToPanel(Graphics2D g2, boolean showValues)
         {
             g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-            g2.setFont(new Font("TimesRoman", Font.PLAIN, TaflConfig.UI_TILE_SIZE / 4));
-
-            //draw borders of the game board
-            //TaflUtils.drawOutlines(TaflConfig.BOARD_SIZE, COLOR_PLAYER_BLACK, COLOR_PLAYER_WHITE, g2, m_gb.m_so.getBoard());
 
             TaflTile lastMovedToken = m_gb.m_so.getlastMovedToken();
 
@@ -175,10 +171,10 @@ public class GameBoardTaflGui
                 {
                     TaflTile tile = m_gb.m_so.getBoard()[x][y];
                     Color cellColor = getBackgroundColor(tile);
-                    TaflUtils.drawTile(tile, g2, cellColor, false);
+                    drawTile(tile, g2, cellColor, false);
                     if (showValues && !GRAYSCALE)
                     {
-                        TaflUtils.drawTileValueText(tile, g2);
+                        drawTileValueText(tile, g2);
                     }
                 }
             }
@@ -187,10 +183,10 @@ public class GameBoardTaflGui
             if (lastMovedToken != null && !GRAYSCALE)
             {
                 Color cellColor = getBackgroundColor(lastMovedToken);
-                TaflUtils.drawTile(lastMovedToken, g2, cellColor, true);
+                drawTile(lastMovedToken, g2, cellColor, true);
                 if (showValues)
                 {
-                    TaflUtils.drawTileValueText(lastMovedToken, g2);
+                    drawTileValueText(lastMovedToken, g2);
                 }
             }
         }
@@ -206,6 +202,106 @@ public class GameBoardTaflGui
                 return COLOR_THRONE;
             }
             return COLOR_CELL;
+        }
+
+        /**
+         * Draws a single tile
+         *
+         * @param tile            Tile to be drawn
+         * @param g2              Graphics context
+         * @param backgroundColor Color to draw the tile in
+         * @param highlight       If a red border surrounding the tile should be drawn
+         */
+        private void drawTile(TaflTile tile, Graphics2D g2, Color backgroundColor, boolean highlight)
+        {
+            Rectangle rect = tile.getRect();
+
+            if (tile.getPlayer() != TaflUtils.PLAYER_NONE)
+            {
+                g2.setColor(backgroundColor);
+                g2.fillRect(rect.x, rect.y, rect.width, rect.height);
+                Color tokenColor = tile.getPlayer() == TaflUtils.PLAYER_BLACK ? GameBoardTaflGui.COLOR_PLAYER_BLACK : GameBoardTaflGui.COLOR_PLAYER_WHITE;
+                if (tile.getCoords().equals(selectedToken))
+                {
+                    tokenColor = new Color(tokenColor.getRed(), tokenColor.getBlue(), tokenColor.getGreen(), 127);
+                }
+                g2.setColor(tokenColor);
+                g2.fillOval(rect.x, rect.y, rect.width, rect.height);
+                if (tile.getToken() == TaflUtils.KING)
+                {
+                    g2.setColor(Color.LIGHT_GRAY);
+                    Font font = new Font("Times New Roman", Font.BOLD, TaflConfig.UI_TILE_SIZE / 2);
+                    drawCenteredString(g2, "K", rect, font);
+                }
+            }
+            else
+            {
+                g2.setColor(backgroundColor);
+                g2.fillRect(rect.x, rect.y, rect.width, rect.height);
+            }
+
+            if (highlight)
+            {
+                g2.setStroke(new BasicStroke(3));
+                g2.setColor(Color.RED);
+            }
+            else
+            {
+                g2.setColor(GameBoardTaflGui.COLOR_GRID);
+            }
+
+            g2.drawRect(rect.x, rect.y, rect.width, rect.height);
+        }
+
+        /**
+         * Draw a String centered in the middle of a Rectangle.
+         *
+         * @param g    The Graphics instance.
+         * @param text The String to draw.
+         * @param rect The Rectangle to center the text in.
+         */
+        private void drawCenteredString(Graphics g, String text, Rectangle rect, Font font)
+        {
+            // Get the FontMetrics
+            FontMetrics metrics = g.getFontMetrics(font);
+            // Determine the X coordinate for the text
+            int x = rect.x + (rect.width - metrics.stringWidth(text)) / 2;
+            // Determine the Y coordinate for the text (note we add the ascent, as in java 2d 0 is top of the screen)
+            int y = rect.y + ((rect.height - metrics.getHeight()) / 2) + metrics.getAscent();
+            // Set the font
+            g.setFont(font);
+            // Draw the String
+            g.drawString(text, x, y);
+        }
+
+        /**
+         * Draws the tile value on top of the tile.
+         * Tile value is transformed from [-1, +1] to [-1000, +1000].
+         * Text color is calculated using luminosity function from: https://en.wikipedia.org/wiki/Relative_luminance
+         * Text color function has been adjusted for better readability on deep red tiles.
+         * Text is always exactly centered in the tile.
+         *
+         * @param tile Tile for which value is to be drawn
+         * @param g2   Graphics context
+         */
+        private void drawTileValueText(TaflTile tile, Graphics2D g2)
+        {
+            double tileValue = tile.getValue();
+            if (Double.isNaN(tileValue))
+            {
+                return;
+            }
+
+            Rectangle rect = tile.getRect();
+            Color tokenColor = tile.getPlayer() == TaflUtils.PLAYER_BLACK ? Color.BLACK : Color.WHITE;
+            int luminance = (int) (0.8 * tokenColor.getRed() + 0.7152 * tokenColor.getGreen() + 0.0722 * tokenColor.getBlue());
+            int luminance_inverse = Math.max(255 - luminance, 0);
+            Color textColor = new Color(luminance_inverse, luminance_inverse, luminance_inverse, 255);
+            g2.setColor(textColor);
+
+            String tileText = Long.toString(Math.round(tileValue * 100));
+            Font font = new Font("TimesRoman", Font.PLAIN, TaflConfig.UI_TILE_SIZE / 4);
+            drawCenteredString(g2, tileText, rect, font);
         }
 
         /**
@@ -228,7 +324,13 @@ public class GameBoardTaflGui
 
                 if (selectedToken == null)
                 {
-                    selectedToken = p;
+                    TaflTile clicked = m_gb.m_so.getBoard()[p.x][p.y];
+                    if (clicked.getPlayer() == m_gb.m_so.getPlayer() && !TaflUtils.generateMovesForToken(m_gb.m_so.getBoard(), clicked).isEmpty())
+                    {
+                        selectedToken = p;
+                        m_gb.m_so.storeBestActionInfo(selectedToken);
+                        m_frame.repaint();
+                    }
                     return;
                 }
 
