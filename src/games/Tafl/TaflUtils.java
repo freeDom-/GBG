@@ -165,11 +165,14 @@ public class TaflUtils
     /**
      * Checks if the game has a winner
      *
-     * @param board          The game board
-     * @param lastMovedToken The last moved token
+     * @param board            The game board
+     * @param repeatedBoard    The board which needs to be checked for a repetition
+     * @param availableActions A list with all available actions
+     * @param lastMovedToken   The last moved token
+     * @param king             The king token
      * @return the number representation of the player who won the game, -1 if there is no winner
      */
-    static int getWinner(TaflTile[][] board, TaflTile[][] repeatedBoard, ArrayList<Types.ACTIONS> availableActions, TaflTile lastMovedToken)
+    static int getWinner(TaflTile[][] board, TaflTile[][] repeatedBoard, ArrayList<Types.ACTIONS> availableActions, TaflTile lastMovedToken, TaflTile king)
     {
         if (lastMovedToken == null)
         {
@@ -177,12 +180,12 @@ public class TaflUtils
             return PLAYER_NONE;
         }
         // King escaped
-        if (isKingEscaped(lastMovedToken))
+        if (isKingEscaped(king))
         {
             return PLAYER_WHITE;
         }
         // King captured
-        if (isKingCaptured(board, lastMovedToken))
+        if (isKingCaptured(board, lastMovedToken, king))
         {
             return PLAYER_BLACK;
         }
@@ -229,12 +232,12 @@ public class TaflUtils
     /**
      * Checks if the king is escaped
      *
-     * @param lastMovedToken The last moved token
+     * @param king The king token
      * @return true if the king is escaped, false otherwise
      */
-    static boolean isKingEscaped(TaflTile lastMovedToken)
+    static boolean isKingEscaped(TaflTile king)
     {
-        return lastMovedToken.getToken() == KING && (isTileCorner(lastMovedToken) || TaflConfig.RULE_EASY_KING_ESCAPE && isTileEdge(lastMovedToken));
+        return isTileCorner(king) || TaflConfig.RULE_EASY_KING_ESCAPE && isTileEdge(king);
     }
 
     /**
@@ -242,9 +245,10 @@ public class TaflUtils
      *
      * @param board          The game board
      * @param lastMovedToken The last moved token
+     * @param king           The king token
      * @return true if the king is captured, false otherwise
      */
-    static boolean isKingCaptured(TaflTile[][] board, TaflTile lastMovedToken)
+    static boolean isKingCaptured(TaflTile[][] board, TaflTile lastMovedToken, TaflTile king)
     {
         if (lastMovedToken.getPlayer() == PLAYER_WHITE)
         {
@@ -252,41 +256,40 @@ public class TaflUtils
         }
 
         ArrayList<TaflTile> neighbors = getNeighbors(board, lastMovedToken);
-        for (TaflTile neighbor : neighbors)
+        if (neighbors.contains(king))
         {
-            if (neighbor.getToken() == KING)
+            // King captured by 4 tokens
+            if (!TaflConfig.RULE_NO_SPECIAL_TILES && (isTileThrone(king) || isTileNextToThrone(king)) || TaflConfig.RULE_HARD_KING_CAPTURE)
             {
-                TaflTile king = neighbor;
-                if (!TaflConfig.RULE_NO_SPECIAL_TILES && (isTileThrone(king) || isTileNextToThrone(king)) || TaflConfig.RULE_HARD_KING_CAPTURE)
+                ArrayList<TaflTile> kingsNeighbors = getNeighbors(board, king);
+                for (TaflTile kingsNeighbor : kingsNeighbors)
                 {
-                    ArrayList<TaflTile> kingsNeighbors = getNeighbors(board, king);
-                    for (TaflTile kingsNeighbor : kingsNeighbors)
-                    {
-                        if (!isTileHostile(kingsNeighbor, PLAYER_WHITE))
-                        {
-                            return false;
-                        }
-                    }
-                    return true;
-                }
-                else
-                {
-                    // Get difference between lastMovedToken and king and multiply this value to get the token behind the king
-                    int behindKingX = king.getCoords().x + (king.getCoords().x - lastMovedToken.getCoords().x);
-                    int behindKingY = king.getCoords().y + (king.getCoords().y - lastMovedToken.getCoords().y);
-
-                    if (isValidTile(behindKingX, behindKingY))
-                    {
-                        TaflTile behindKing = board[behindKingX][behindKingY];
-                        return isTileHostile(behindKing, PLAYER_WHITE);
-                    }
-                    else
+                    if (!isTileHostile(kingsNeighbor, PLAYER_WHITE))
                     {
                         return false;
                     }
                 }
+                return true;
+            }
+            // King captured by 2 tokens
+            else
+            {
+                // Get difference between lastMovedToken and king and multiply this value to get the token behind the king
+                int behindKingX = king.getCoords().x + (king.getCoords().x - lastMovedToken.getCoords().x);
+                int behindKingY = king.getCoords().y + (king.getCoords().y - lastMovedToken.getCoords().y);
+
+                if (isValidTile(behindKingX, behindKingY))
+                {
+                    TaflTile behindKing = board[behindKingX][behindKingY];
+                    return isTileHostile(behindKing, PLAYER_WHITE);
+                }
+                else
+                {
+                    return false;
+                }
             }
         }
+
         return false;
     }
 

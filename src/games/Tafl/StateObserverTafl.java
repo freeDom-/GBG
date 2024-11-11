@@ -21,6 +21,7 @@ public class StateObserverTafl
     private int currentPlayer;
     private final TaflTile[][] board;
     private final TaflTile[][][] lastBoards;
+    private TaflTile king;
     private TaflTile lastMovedToken;
 
     private ArrayList<Types.ACTIONS> availableActions;
@@ -28,6 +29,7 @@ public class StateObserverTafl
     public StateObserverTafl()
     {
         board = defaultGameBoard();
+        king = board[TaflConfig.BOARD_SIZE / 2][TaflConfig.BOARD_SIZE / 2];
         lastBoards = new TaflTile[5][TaflConfig.BOARD_SIZE][TaflConfig.BOARD_SIZE];
 
         currentPlayer = TaflConfig.START_PLAYER;
@@ -82,6 +84,11 @@ public class StateObserverTafl
     public TaflTile[][][] getLastBoards()
     {
         return lastBoards;
+    }
+
+    public TaflTile getKing()
+    {
+        return king;
     }
 
     /**
@@ -223,6 +230,11 @@ public class StateObserverTafl
         startTile.setPlayer(TaflUtils.PLAYER_NONE);
         startTile.setToken(TaflUtils.EMPTY);
 
+        if (endTile.getToken() == TaflUtils.KING)
+        {
+            king = endTile;
+        }
+
         // Get captures
         ArrayList<TaflTile> captures = TaflUtils.getCaptures(board, endTile);
         for (TaflTile captured : captures)
@@ -264,7 +276,7 @@ public class StateObserverTafl
     @Override
     public double getGameScore(int player)
     {
-        int winner = TaflUtils.getWinner(board, lastBoards[4], availableActions, lastMovedToken);
+        int winner = TaflUtils.getWinner(board, lastBoards[4], availableActions, lastMovedToken, king);
         if (winner == TaflUtils.PLAYER_NONE)
         {
             return 0;
@@ -287,7 +299,7 @@ public class StateObserverTafl
     @Override
     public boolean isGameOver()
     {
-        return TaflUtils.getWinner(board, lastBoards[4], availableActions, lastMovedToken) != TaflUtils.PLAYER_NONE;
+        return TaflUtils.getWinner(board, lastBoards[4], availableActions, lastMovedToken, king) != TaflUtils.PLAYER_NONE;
     }
 
     @Override
