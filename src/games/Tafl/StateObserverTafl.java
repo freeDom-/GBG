@@ -40,6 +40,7 @@ public class StateObserverTafl
     {
         super(other);
         board = copyTable(other.board);
+        king = other.king;
         currentPlayer = other.currentPlayer;
         lastMovedToken = other.lastMovedToken;
         lastBoards = other.lastBoards.clone();
@@ -194,6 +195,34 @@ public class StateObserverTafl
     public Types.ACTIONS getAction(int i)
     {
         return availableActions.get(i);
+    }
+
+    @Override
+    public void storeBestActionInfo(Types.ACTIONS_VT actBest)
+    {
+        double[] valueTable = actBest.getVTable();
+
+        for (int y = 0; y < TaflConfig.BOARD_SIZE; y++)
+        {
+            for (int x = 0; x < TaflConfig.BOARD_SIZE; x++)
+            {
+                board[x][y].setValue(Double.NaN);
+            }
+        }
+
+        for (int i = 0; i < getNumAvailableActions(); i++)
+        {
+            double val = valueTable[i];
+            int actionInt = getAction(i).toInt();
+            Point[] move = TaflUtils.getMoveFromActionNumber(actionInt);
+            int x = move[0].x;
+            int y = move[0].y;
+            double prevVal = board[x][y].getValue();
+            if (Double.isNaN(prevVal) || prevVal < val)
+            {
+                board[x][y].setValue(val);
+            }
+        }
     }
 
     @Override

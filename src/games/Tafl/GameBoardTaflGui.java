@@ -178,7 +178,7 @@ public class GameBoardTaflGui
                     TaflUtils.drawTile(tile, g2, cellColor, false);
                     if (showValues && !GRAYSCALE)
                     {
-                        TaflUtils.drawTileValueText(tile, g2, cellColor);
+                        TaflUtils.drawTileValueText(tile, g2);
                     }
                 }
             }
@@ -190,7 +190,7 @@ public class GameBoardTaflGui
                 TaflUtils.drawTile(lastMovedToken, g2, cellColor, true);
                 if (showValues)
                 {
-                    TaflUtils.drawTileValueText(lastMovedToken, g2, cellColor);
+                    TaflUtils.drawTileValueText(lastMovedToken, g2);
                 }
             }
         }

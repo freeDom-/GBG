@@ -591,7 +591,7 @@ public class TaflUtils
             g2.fillOval(rect.x, rect.y, rect.width, rect.height);
             if (tile.getToken() == KING)
             {
-                g2.setColor(Color.BLACK);
+                g2.setColor(Color.GRAY);
                 Font font = new Font("Times New Roman", Font.BOLD, TaflConfig.UI_TILE_SIZE / 2);
                 drawCenteredString(g2, "K", rect, font);
             }
@@ -643,11 +643,10 @@ public class TaflUtils
      * Text color function has been adjusted for better readability on deep red tiles.
      * Text is always exactly centered in the tile.
      *
-     * @param tile      Tile for which value is to be drawn
-     * @param g2        Graphics context
-     * @param cellColor Color of cell, needed for text color calculation
+     * @param tile Tile for which value is to be drawn
+     * @param g2   Graphics context
      */
-    public static void drawTileValueText(TaflTile tile, Graphics2D g2, Color cellColor)
+    public static void drawTileValueText(TaflTile tile, Graphics2D g2)
     {
         double tileValue = tile.getValue();
         if (Double.isNaN(tileValue))
@@ -656,23 +655,14 @@ public class TaflUtils
         }
 
         Rectangle rect = tile.getRect();
-        int x = tile.getCoords().x;
-        int y = tile.getCoords().y;
-
-        int luminance = (int) (0.8 * cellColor.getRed() + 0.7152 * cellColor.getGreen() + 0.0722 * cellColor.getBlue());
+        Color tokenColor = tile.getPlayer() == PLAYER_BLACK ? Color.BLACK : Color.WHITE;
+        int luminance = (int) (0.8 * tokenColor.getRed() + 0.7152 * tokenColor.getGreen() + 0.0722 * tokenColor.getBlue());
         int luminance_inverse = Math.max(255 - luminance, 0);
         Color textColor = new Color(luminance_inverse, luminance_inverse, luminance_inverse, 255);
-
         g2.setColor(textColor);
 
-        String tileText = Long.toString(Math.round(tileValue * 1000));
-
-        int width = g2.getFontMetrics().stringWidth(tileText);
-        int height = g2.getFontMetrics().getHeight();
-
-        int textX = (int) (x + (rect.width * 1.5) - (width / 2f));
-        int textY = (int) (y + (rect.height / 2f) + (height));
-
-        g2.drawString(tileText, textX, textY);
+        String tileText = Long.toString(Math.round(tileValue * 100));
+        Font font = new Font("Times New Roman", Font.BOLD, TaflConfig.UI_TILE_SIZE / 2);
+        drawCenteredString(g2, tileText, rect, font);
     }
 }
