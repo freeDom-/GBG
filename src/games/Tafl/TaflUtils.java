@@ -2,7 +2,13 @@ package games.Tafl;
 
 import controllers.PlayAgent;
 import controllers.TD.TDAgent;
-import games.Arena;
+import controllers.TD.ntuple2.SarsaAgt;
+import controllers.TD.ntuple2.TDNTuple3Agt;
+import controllers.TD.ntuple4.QLearn4Agt;
+import controllers.TD.ntuple4.Sarsa4Agt;
+import controllers.TD.ntuple4.TDNTuple4Agt;
+import params.ParNT;
+import params.ParRB;
 import params.ParTD;
 import tools.Types;
 
@@ -578,50 +584,181 @@ public class TaflUtils
      * Get a string representation for an agents parameters
      *
      * @param playAgent The play agent
-     * @param arena     The arena
      * @return A string representation for the agents parameters
      */
-    public static String getParamsString(PlayAgent playAgent, Arena arena)
+    public static String getParamsString(PlayAgent playAgent)
     {
         String paramString = "";
-        paramString += playAgent.getMaxGameNum() + " ";
+        ParTD tdParams = null;
+        ParNT ntParams = null;
+        ParRB rbParams = null;
 
         switch (playAgent.getName())
         {
             case "TDS":
                 TDAgent tdAgent = (TDAgent) playAgent;
-                ParTD params = tdAgent.getParTD();
-                paramString += "featmode=" + params.getFeatmode();
-                paramString += "alpha=" + params.getAlpha();
-                if (params.getAlpha() != params.getAlphaFinal())
-                {
-                    paramString += ".." + params.getAlphaFinal();
-                }
-                paramString += ",epsilon=" + params.getEpsilon();
-                if (params.getEpsilon() != params.getEpsilonFinal())
-                {
-                    paramString += ".." + params.getEpsilonFinal();
-                }
-                paramString += ",lambda=" + params.getLambda();
-                paramString += ",gamma=" + params.getGamma();
-                paramString += ",epochs=" + params.getEpochs();
-                if (!params.hasLinearNet())
-                {
-                    paramString += ",nnet";
-                }
-                if (params.hasSigmoid())
-                {
-                    paramString += ",sigmoid";
-                }
-                if (params.getNormalize())
-                {
-                    paramString += ",normalize";
-                }
-                if (params.hasStopOnRoundOver())
-                {
-                    paramString += ",stoproundover";
-                }
+                tdParams = tdAgent.getParTD();
+                rbParams = tdAgent.getParReplay();
                 break;
+            case "TD-Ntuple-3":
+                TDNTuple3Agt nt3Agent = (TDNTuple3Agt) playAgent;
+                tdParams = nt3Agent.getParTD();
+                ntParams = nt3Agent.getParNT();
+                rbParams = nt3Agent.getParReplay();
+                break;
+            case "TD-Ntuple-4":
+                TDNTuple4Agt nt4Agent = (TDNTuple4Agt) playAgent;
+                tdParams = nt4Agent.getParTD();
+                ntParams = nt4Agent.getParNT();
+                rbParams = nt4Agent.getParReplay();
+                break;
+            case "Sarsa":
+                SarsaAgt sarsaAgt = (SarsaAgt) playAgent;
+                tdParams = sarsaAgt.getParTD();
+                ntParams = sarsaAgt.getParNT();
+                rbParams = sarsaAgt.getParReplay();
+                break;
+            case "Sarsa-4":
+                Sarsa4Agt sarsa4Agt = (Sarsa4Agt) playAgent;
+                tdParams = sarsa4Agt.getParTD();
+                ntParams = sarsa4Agt.getParNT();
+                rbParams = sarsa4Agt.getParReplay();
+                break;
+            case "Qlearn-4":
+                QLearn4Agt qLearn4Agt = (QLearn4Agt) playAgent;
+                tdParams = qLearn4Agt.getParTD();
+                ntParams = qLearn4Agt.getParNT();
+                rbParams = qLearn4Agt.getParReplay();
+                break;
+        }
+
+        paramString += "maxgames=" + playAgent.getMaxGameNum();
+
+        if (tdParams != null)
+        {
+            paramString += ",featmode=" + tdParams.getFeatmode();
+            paramString += ",alpha=" + tdParams.getAlpha();
+            if (tdParams.getAlpha() != tdParams.getAlphaFinal())
+            {
+                paramString += ".." + tdParams.getAlphaFinal();
+            }
+            paramString += ",epsilon=" + tdParams.getEpsilon();
+            if (tdParams.getEpsilon() != tdParams.getEpsilonFinal())
+            {
+                paramString += ".." + tdParams.getEpsilonFinal();
+            }
+            paramString += ",lambda=" + tdParams.getLambda();
+            paramString += ",gamma=" + tdParams.getGamma();
+            paramString += ",epochs=" + tdParams.getEpochs();
+            if (!tdParams.hasLinearNet())
+            {
+                paramString += ",nnet";
+            }
+            if (tdParams.hasSigmoid())
+            {
+                paramString += ",sigmoid";
+            }
+            if (tdParams.getNormalize())
+            {
+                paramString += ",normalize";
+            }
+            if (tdParams.hasStopOnRoundOver())
+            {
+                paramString += ",stoproundover";
+            }
+        }
+
+        return paramString;
+    }
+
+    /**
+     * Get an abbreviated string representation for an agents parameters
+     *
+     * @param playAgent The play agent
+     * @return An abbreviated string representation for the agents parameters
+     */
+    public static String getParamsStringAbbr(PlayAgent playAgent)
+    {
+        String paramString = "";
+        ParTD tdParams = null;
+        ParNT ntParams = null;
+        ParRB rbParams = null;
+
+        switch (playAgent.getName())
+        {
+            case "TDS":
+                TDAgent tdAgent = (TDAgent) playAgent;
+                tdParams = tdAgent.getParTD();
+                rbParams = tdAgent.getParReplay();
+                break;
+            case "TD-Ntuple-3":
+                TDNTuple3Agt nt3Agent = (TDNTuple3Agt) playAgent;
+                tdParams = nt3Agent.getParTD();
+                ntParams = nt3Agent.getParNT();
+                rbParams = nt3Agent.getParReplay();
+                break;
+            case "TD-Ntuple-4":
+                TDNTuple4Agt nt4Agent = (TDNTuple4Agt) playAgent;
+                tdParams = nt4Agent.getParTD();
+                ntParams = nt4Agent.getParNT();
+                rbParams = nt4Agent.getParReplay();
+                break;
+            case "Sarsa":
+                SarsaAgt sarsaAgt = (SarsaAgt) playAgent;
+                tdParams = sarsaAgt.getParTD();
+                ntParams = sarsaAgt.getParNT();
+                rbParams = sarsaAgt.getParReplay();
+                break;
+            case "Sarsa-4":
+                Sarsa4Agt sarsa4Agt = (Sarsa4Agt) playAgent;
+                tdParams = sarsa4Agt.getParTD();
+                ntParams = sarsa4Agt.getParNT();
+                rbParams = sarsa4Agt.getParReplay();
+                break;
+            case "Qlearn-4":
+                QLearn4Agt qLearn4Agt = (QLearn4Agt) playAgent;
+                tdParams = qLearn4Agt.getParTD();
+                ntParams = qLearn4Agt.getParNT();
+                rbParams = qLearn4Agt.getParReplay();
+                break;
+        }
+
+        paramString += getNumberWithUnit(playAgent.getMaxGameNum()) + " ";
+
+        if (tdParams != null)
+        {
+            paramString += "(";
+            paramString += "featmode=" + tdParams.getFeatmode();
+            paramString += ",a=" + tdParams.getAlpha();
+            if (tdParams.getAlpha() != tdParams.getAlphaFinal())
+            {
+                paramString += ".." + tdParams.getAlphaFinal();
+            }
+            paramString += ",e=" + tdParams.getEpsilon();
+            if (tdParams.getEpsilon() != tdParams.getEpsilonFinal())
+            {
+                paramString += ".." + tdParams.getEpsilonFinal();
+            }
+            paramString += ",l=" + tdParams.getLambda();
+            paramString += ",g=" + tdParams.getGamma();
+            paramString += ",ep=" + tdParams.getEpochs();
+            if (!tdParams.hasLinearNet())
+            {
+                paramString += ",nn";
+            }
+            if (tdParams.hasSigmoid())
+            {
+                paramString += ",sig";
+            }
+            if (tdParams.getNormalize())
+            {
+                paramString += ",norm";
+            }
+            if (tdParams.hasStopOnRoundOver())
+            {
+                paramString += ",stop";
+            }
+            paramString += ")";
         }
 
         return paramString;
@@ -647,60 +784,5 @@ public class TaflUtils
         }
 
         return result;
-    }
-
-    /**
-     * Get an abbreviated string representation for an agents parameters
-     *
-     * @param playAgent The play agent
-     * @param arena     The arena
-     * @return An abbreviated string representation for the agents parameters
-     */
-    public static String getParamsStringAbbr(PlayAgent playAgent, Arena arena)
-    {
-        String paramString = "";
-        paramString += getNumberWithUnit(playAgent.getMaxGameNum()) + " ";
-
-        switch (playAgent.getName())
-        {
-            case "TDS":
-                TDAgent tdAgent = (TDAgent) playAgent;
-                ParTD params = tdAgent.getParTD();
-                paramString += "(";
-                paramString += "featmode=" + params.getFeatmode();
-                paramString += ",a=" + params.getAlpha();
-                if (params.getAlpha() != params.getAlphaFinal())
-                {
-                    paramString += ".." + params.getAlphaFinal();
-                }
-                paramString += ",e=" + params.getEpsilon();
-                if (params.getEpsilon() != params.getEpsilonFinal())
-                {
-                    paramString += ".." + params.getEpsilonFinal();
-                }
-                paramString += ",l=" + params.getLambda();
-                paramString += ",g=" + params.getGamma();
-                paramString += ",ep=" + params.getEpochs();
-                if (!params.hasLinearNet())
-                {
-                    paramString += ",nn";
-                }
-                if (params.hasSigmoid())
-                {
-                    paramString += ",sig";
-                }
-                if (params.getNormalize())
-                {
-                    paramString += ",norm";
-                }
-                if (params.hasStopOnRoundOver())
-                {
-                    paramString += ",stop";
-                }
-                paramString += ")";
-                break;
-        }
-
-        return paramString;
     }
 }
