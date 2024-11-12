@@ -61,7 +61,7 @@ public class FeatureTafl
     @Override
     public int[] getAvailFeatmode()
     {
-        return new int[] {0};
+        return new int[] {0, 1};
     }
 
     @Override

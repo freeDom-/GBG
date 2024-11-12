@@ -79,6 +79,7 @@ public class EvaluatorTafl
     {
         this.playAgent = pa;
         ArenaTafl arena = (ArenaTafl) m_gb.getArena();
+
         //Disable evaluation by using mode -1
         if (m_mode == -1)
         {
@@ -97,14 +98,8 @@ public class EvaluatorTafl
         {
             tools.Utils.checkAndCreateFolder(logDir);
             logSB = new StringBuilder();
-            logSB.append("Evaluating agent ").append(pa.getName()).append(" for ").append(pa.getMaxGameNum()).append(" ").append(getPrintString()).append("\n");
-            logSB.append("Agent params: ");
-            switch (pa.getName())
-            {
-                case "TDS":
-                    //arena.m_xab.tdPar
-                    break;
-            }
+            logSB.append("Evaluating agent ").append(playAgent.getName()).append(" for ").append(playAgent.getMaxGameNum()).append(" ").append(getPrintString()).append("\n");
+            logSB.append("Agent params: ").append(TaflUtils.getParamsString(playAgent, arena)).append("\n");
             logSB.append("training_matches").append(",");
             logSB.append("result").append(",");
             logSB.append("num_learn_actions").append(",");
@@ -113,7 +108,7 @@ public class EvaluatorTafl
             logSB.append("eval_time_ms").append("\n");
             try
             {
-                logFile = new PrintWriter(logDir + "/" + getCurrentTimeStamp() + " - " + pa.getName() + ".csv");
+                logFile = new PrintWriter(logDir + "/" + getCurrentTimeStamp() + " - " + playAgent.getName() + ".csv");
             }
             catch (FileNotFoundException e)
             {
@@ -162,14 +157,15 @@ public class EvaluatorTafl
             {
                 String gameDir = Types.GUI_DEFAULT_DIR_AGENT + "/" + arena.getGameName() + "/";
                 String subDir = arena.getGameBoard().getSubDir() + "/";
-                String dateDir = getCurrentTimeStamp() + " " + pa.getName() + "/";
+                String params = TaflUtils.getParamsStringAbbr(playAgent, arena);
+                String dateDir = getCurrentTimeStamp() + " " + playAgent.getName() + (params.isEmpty() ? "" : " " + TaflUtils.getParamsStringAbbr(playAgent, arena)) + "/";
                 agentDir = gameDir + subDir + dateDir;
                 tools.Utils.checkAndCreateFolder(agentDir);
             }
 
-            String fileName = pa.getName() + " " + pa.getGameNum() + " of " + pa.getMaxGameNum() + " " + formattedResult + ".agt.zip";
+            String fileName = playAgent.getName() + " " + playAgent.getGameNum() + " of " + playAgent.getMaxGameNum() + " " + formattedResult + ".agt.zip";
             String savePath = agentDir + fileName;
-            arena.saveAgent(pa, savePath);
+            arena.saveAgent(playAgent, savePath);
             bestResult = result;
         }
 

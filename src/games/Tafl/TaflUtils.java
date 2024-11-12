@@ -1,5 +1,9 @@
 package games.Tafl;
 
+import controllers.PlayAgent;
+import controllers.TD.TDAgent;
+import games.Arena;
+import params.ParTD;
 import tools.Types;
 
 import java.awt.*;
@@ -568,5 +572,135 @@ public class TaflUtils
         int tileY = y * tileSize;
 
         return new Rectangle(tileX, tileY, tileSize, tileSize);
+    }
+
+    /**
+     * Get a string representation for an agents parameters
+     *
+     * @param playAgent The play agent
+     * @param arena     The arena
+     * @return A string representation for the agents parameters
+     */
+    public static String getParamsString(PlayAgent playAgent, Arena arena)
+    {
+        String paramString = "";
+        paramString += playAgent.getMaxGameNum() + " ";
+
+        switch (playAgent.getName())
+        {
+            case "TDS":
+                TDAgent tdAgent = (TDAgent) playAgent;
+                ParTD params = tdAgent.getParTD();
+                paramString += "featmode=" + params.getFeatmode();
+                paramString += "alpha=" + params.getAlpha();
+                if (params.getAlpha() != params.getAlphaFinal())
+                {
+                    paramString += ".." + params.getAlphaFinal();
+                }
+                paramString += ",epsilon=" + params.getEpsilon();
+                if (params.getEpsilon() != params.getEpsilonFinal())
+                {
+                    paramString += ".." + params.getEpsilonFinal();
+                }
+                paramString += ",lambda=" + params.getLambda();
+                paramString += ",gamma=" + params.getGamma();
+                paramString += ",epochs=" + params.getEpochs();
+                if (!params.hasLinearNet())
+                {
+                    paramString += ",nnet";
+                }
+                if (params.hasSigmoid())
+                {
+                    paramString += ",sigmoid";
+                }
+                if (params.getNormalize())
+                {
+                    paramString += ",normalize";
+                }
+                if (params.hasStopOnRoundOver())
+                {
+                    paramString += ",stoproundover";
+                }
+                break;
+        }
+
+        return paramString;
+    }
+
+    /**
+     * Convert a number to a string containing the number and the unit (e.g. 10000 -> 10k)
+     *
+     * @param number The number
+     * @return A string representation of the number
+     */
+    public static String getNumberWithUnit(int number)
+    {
+        String result = String.valueOf(number);
+
+        if (number / 1000000 >= 1)
+        {
+            result = number / 1000000 + "m";
+        }
+        else if (number / 1000 >= 1)
+        {
+            result = number / 1000 + "k";
+        }
+
+        return result;
+    }
+
+    /**
+     * Get an abbreviated string representation for an agents parameters
+     *
+     * @param playAgent The play agent
+     * @param arena     The arena
+     * @return An abbreviated string representation for the agents parameters
+     */
+    public static String getParamsStringAbbr(PlayAgent playAgent, Arena arena)
+    {
+        String paramString = "";
+        paramString += getNumberWithUnit(playAgent.getMaxGameNum()) + " ";
+
+        switch (playAgent.getName())
+        {
+            case "TDS":
+                TDAgent tdAgent = (TDAgent) playAgent;
+                ParTD params = tdAgent.getParTD();
+                paramString += "(";
+                paramString += "featmode=" + params.getFeatmode();
+                paramString += ",a=" + params.getAlpha();
+                if (params.getAlpha() != params.getAlphaFinal())
+                {
+                    paramString += ".." + params.getAlphaFinal();
+                }
+                paramString += ",e=" + params.getEpsilon();
+                if (params.getEpsilon() != params.getEpsilonFinal())
+                {
+                    paramString += ".." + params.getEpsilonFinal();
+                }
+                paramString += ",l=" + params.getLambda();
+                paramString += ",g=" + params.getGamma();
+                paramString += ",ep=" + params.getEpochs();
+                if (!params.hasLinearNet())
+                {
+                    paramString += ",nn";
+                }
+                if (params.hasSigmoid())
+                {
+                    paramString += ",sig";
+                }
+                if (params.getNormalize())
+                {
+                    paramString += ",norm";
+                }
+                if (params.hasStopOnRoundOver())
+                {
+                    paramString += ",stop";
+                }
+                paramString += ")";
+                break;
+        }
+
+        return paramString;
     }
 }
