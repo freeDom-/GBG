@@ -328,7 +328,7 @@ public class GameBoardTaflGui
                     if (clicked.getPlayer() == m_gb.m_so.getPlayer() && !TaflUtils.generateMovesForToken(m_gb.m_so.getBoard(), clicked).isEmpty())
                     {
                         selectedToken = p;
-                        m_gb.m_so.storeBestActionInfo(selectedToken);
+                        m_gb.m_so.storeBoardValues(selectedToken);
                         m_frame.repaint();
                     }
                     return;

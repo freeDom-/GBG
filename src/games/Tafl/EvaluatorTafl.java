@@ -29,6 +29,7 @@ public class EvaluatorTafl
     private RandomAgent randomAgent;
     private PlayAgent playAgent;
     private double bestResult = Double.NEGATIVE_INFINITY;
+    private String agentDir;
 
     /**
      * logResults toggles logging of training progress to a csv file located in {@link #logDir}
@@ -96,10 +97,10 @@ public class EvaluatorTafl
             tools.Utils.checkAndCreateFolder(logDir);
             logSB = new StringBuilder();
             logSB.append("Evaluating agent ").append(pa.getName()).append(" for ").append(pa.getMaxGameNum()).append(" ").append(getPrintString()).append("\n");
-            logSB.append("Training params: ").append("\n");
             logSB.append("training_matches").append(",");
             logSB.append("result").append(",");
             logSB.append("num_learn_actions").append(",");
+            logSB.append("num_train_moves").append(",");
             logSB.append("train_time_ms").append(",");
             logSB.append("eval_time_ms").append("\n");
             try
@@ -130,6 +131,7 @@ public class EvaluatorTafl
             logSB.append(playAgent.getGameNum()).append(",");
             logSB.append(formattedResult).append(",");
             logSB.append(playAgent.getNumLrnActions()).append(",");
+            logSB.append(playAgent.getNumTrnMoves()).append(",");
             logSB.append(playAgent.getDurationTrainingMs()).append(",");
             logSB.append(playAgent.getDurationEvaluationMs()).append("\n");
             logFile.write(logSB.toString());
@@ -148,10 +150,18 @@ public class EvaluatorTafl
         // Check if Arena Task State == TRAIN and save agent if certain score is reached
         if (arena.taskState == Arena.Task.TRAIN && (result >= bestResult || playAgent.getGameNum() == playAgent.getMaxGameNum()))
         {
-            String gameDir = Types.GUI_DEFAULT_DIR_AGENT + "/" + arena.getGameName() + "/";
-            String subDir = arena.getGameBoard().getSubDir() + "/";
+            // Create folder for agent on the first evaluation
+            if (playAgent.getGameNum() == playAgent.getParOther().getNumEval())
+            {
+                String gameDir = Types.GUI_DEFAULT_DIR_AGENT + "/" + arena.getGameName() + "/";
+                String subDir = arena.getGameBoard().getSubDir() + "/";
+                String dateDir = getCurrentTimeStamp() + " " + pa.getName() + "/";
+                agentDir = gameDir + subDir + dateDir;
+                tools.Utils.checkAndCreateFolder(agentDir);
+            }
+
             String fileName = pa.getName() + " " + pa.getGameNum() + " of " + pa.getMaxGameNum() + " " + formattedResult + ".agt.zip";
-            String savePath = gameDir + subDir + fileName;
+            String savePath = agentDir + fileName;
             arena.saveAgent(pa, savePath);
             bestResult = result;
         }

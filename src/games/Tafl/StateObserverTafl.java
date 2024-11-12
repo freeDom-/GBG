@@ -201,11 +201,15 @@ public class StateObserverTafl
     public void storeBestActionInfo(Types.ACTIONS_VT actBest)
     {
         super.storeBestActionInfo(actBest);
-        storeBestActionInfo(actBest.getVTable());
+        if (storedValues.length == getNumAvailableActions())
+        {
+            storeBoardValues();
+        }
     }
 
-    public void storeBestActionInfo(double[] valueTable)
+    public void storeBoardValues()
     {
+        double[] valueTable = storedValues;
         // Clear values
         for (int y = 0; y < TaflConfig.BOARD_SIZE; y++)
         {
@@ -230,15 +234,15 @@ public class StateObserverTafl
         }
     }
 
-    public void storeBestActionInfo(Point selectedToken)
+    public void storeBoardValues(Point selectedToken)
     {
-        double[] valueTable = storedActBest.getVTable();
         if (selectedToken == null)
         {
-            storeBestActionInfo(valueTable);
+            storeBoardValues();
         }
         else
         {
+            double[] valueTable = storedValues;
             // Clear values
             for (int y = 0; y < TaflConfig.BOARD_SIZE; y++)
             {
