@@ -165,7 +165,9 @@ public class EvaluatorTafl
 
             String fileName = playAgent.getName() + " " + playAgent.getGameNum() + " " + formattedResult + ".agt.zip";
             String savePath = agentDir + fileName;
+            playAgent.setAgentState(PlayAgent.AgentState.TRAINED);
             arena.saveAgent(playAgent, savePath);
+            playAgent.setAgentState(PlayAgent.AgentState.INIT);
             bestResult = result;
         }
 
