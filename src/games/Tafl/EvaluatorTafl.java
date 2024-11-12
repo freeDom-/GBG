@@ -78,6 +78,7 @@ public class EvaluatorTafl
     protected EvalResult evalAgent(PlayAgent pa)
     {
         this.playAgent = pa;
+        ArenaTafl arena = (ArenaTafl) m_gb.getArena();
         //Disable evaluation by using mode -1
         if (m_mode == -1)
         {
@@ -97,6 +98,13 @@ public class EvaluatorTafl
             tools.Utils.checkAndCreateFolder(logDir);
             logSB = new StringBuilder();
             logSB.append("Evaluating agent ").append(pa.getName()).append(" for ").append(pa.getMaxGameNum()).append(" ").append(getPrintString()).append("\n");
+            logSB.append("Agent params: ");
+            switch (pa.getName())
+            {
+                case "TDS":
+                    //arena.m_xab.tdPar
+                    break;
+            }
             logSB.append("training_matches").append(",");
             logSB.append("result").append(",");
             logSB.append("num_learn_actions").append(",");
@@ -146,7 +154,6 @@ public class EvaluatorTafl
             }
         }
 
-        ArenaTafl arena = (ArenaTafl) m_gb.getArena();
         // Check if Arena Task State == TRAIN and save agent if certain score is reached
         if (arena.taskState == Arena.Task.TRAIN && (result >= bestResult || playAgent.getGameNum() == playAgent.getMaxGameNum()))
         {
