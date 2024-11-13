@@ -583,20 +583,25 @@ public class TaflUtils
     }
 
     /**
-     * Get a string representation for an agents parameters
+     * Get string representations for an agents parameters
      *
      * @param playAgent    The play agent
      * @param shortVersion Returns a shorter version of the string
-     * @return A string representation for the agents parameters
+     * @return <pre>A string array containing string representation for the agents parameters in the following order:<br>
+     * 0: tdParams<br>
+     * 1: ntParams<br>
+     * 2: rbParams<br>
+     * 3: otherParams</pre>
      */
-    public static String getParamsString(PlayAgent playAgent, boolean shortVersion)
+    public static String[] getParamStrings(PlayAgent playAgent, boolean shortVersion)
     {
+        String[] params = new String[4];
         String paramString = "";
-        Serializable[] params = getAgentParams(playAgent);
-        ParTD tdParams = (ParTD) params[0];
-        ParNT ntParams = (ParNT) params[1];
-        ParRB rbParams = (ParRB) params[2];
-        ParOther otherParams = (ParOther) params[3];
+        Serializable[] agentParams = getAgentParams(playAgent);
+        ParTD tdParams = (ParTD) agentParams[0];
+        ParNT ntParams = (ParNT) agentParams[1];
+        ParRB rbParams = (ParRB) agentParams[2];
+        ParOther otherParams = (ParOther) agentParams[3];
 
         paramString += shortVersion ? getNumberWithUnit(playAgent.getMaxGameNum()) + " " : "maxgames=" + playAgent.getMaxGameNum();
 
@@ -635,15 +640,23 @@ public class TaflUtils
             }
             paramString += shortVersion ? ")" : "";
         }
+        params[0] = paramString;
+        params[1] = "";
+        params[2] = "";
+        params[3] = "";
 
-        return paramString;
+        return params;
     }
 
     /**
      * Gets the parameters of an agent
      *
      * @param playAgent The play agent
-     * @return An array containing the parameters  in the following order: tdParams, ntParams, rbParams, otherParams
+     * @return <pre>An array containing the parameters  in the following order:<br>
+     * 0: tdParams<br>
+     * 1: ntParams<br>
+     * 2: rbParams<br>
+     * 3: otherParams</pre>
      */
     public static Serializable[] getAgentParams(PlayAgent playAgent)
     {
