@@ -22,8 +22,8 @@ public class TaflConfig
      * Number of tiles on the game board
      */
     static int TILE_COUNT = BOARD_SIZE * BOARD_SIZE;
-    
-    static int ACTIONS_PER_TOKEN = 14;
+
+    static int ACTIONS_PER_TOKEN = BOARD_SIZE * 2;
 
     static int UI_TILE_SIZE = 64;
     static int UI_OFFSET = 0;

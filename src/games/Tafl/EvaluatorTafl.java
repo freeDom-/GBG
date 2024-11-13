@@ -99,7 +99,7 @@ public class EvaluatorTafl
             tools.Utils.checkAndCreateFolder(logDir);
             logSB = new StringBuilder();
             logSB.append("Evaluating agent ").append(playAgent.getName()).append(" for ").append(playAgent.getMaxGameNum()).append(" ").append(getPrintString()).append("\n");
-            logSB.append("Agent params: ").append(TaflUtils.getParamsString(playAgent)).append("\n");
+            logSB.append("Agent params: ").append(TaflUtils.getParamsString(playAgent, false)).append("\n");
             logSB.append("training_matches").append(",");
             logSB.append("result").append(",");
             logSB.append("num_learn_actions").append(",");
@@ -157,7 +157,7 @@ public class EvaluatorTafl
             {
                 String gameDir = Types.GUI_DEFAULT_DIR_AGENT + "/" + arena.getGameName() + "/";
                 String subDir = arena.getGameBoard().getSubDir() + "/";
-                String params = TaflUtils.getParamsStringAbbr(playAgent);
+                String params = TaflUtils.getParamsString(playAgent, true);
                 String dateDir = getCurrentTimeStamp() + " " + playAgent.getName() + (params.isEmpty() ? "" : " " + params) + "/";
                 agentDir = gameDir + subDir + dateDir;
                 tools.Utils.checkAndCreateFolder(agentDir);
