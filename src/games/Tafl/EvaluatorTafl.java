@@ -118,7 +118,7 @@ public class EvaluatorTafl
                 String gameDir = Types.GUI_DEFAULT_DIR_AGENT + "/" + arena.getGameName() + "/";
                 String subDir = arena.getGameBoard().getSubDir() + "/";
                 String[] agentParams = TaflUtils.getParamStrings(playAgent, true);
-                String detailDir = evalTimestamp + " " + playAgent.getName() + agentParams[0] + "/";
+                String detailDir = evalTimestamp + " " + playAgent.getName() + " " + agentParams[0] + "/";
                 agentDir = gameDir + subDir + detailDir;
                 logDir = agentDir;
                 tools.Utils.checkAndCreateFolder(agentDir);
