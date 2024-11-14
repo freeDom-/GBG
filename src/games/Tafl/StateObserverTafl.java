@@ -243,6 +243,10 @@ public class StateObserverTafl
         else
         {
             double[] valueTable = storedValues;
+            if (valueTable == null || valueTable.length != getNumAvailableActions())
+            {
+                return;
+            }
             // Clear values
             for (int y = 0; y < TaflConfig.BOARD_SIZE; y++)
             {
