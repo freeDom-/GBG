@@ -271,7 +271,7 @@ public class TaflUtils
         if (neighbors.contains(king))
         {
             // King captured by 4 tokens
-            if (!TaflConfig.RULE_NO_SPECIAL_TILES && (isTileThrone(king) || isTileNextToThrone(king)) || TaflConfig.RULE_HARD_KING_CAPTURE)
+            if (!TaflConfig.RULE_NO_SPECIAL_TILES && isTileThrone(king) || TaflConfig.RULE_HARD_KING_CAPTURE)
             {
                 ArrayList<TaflTile> kingsNeighbors = getNeighbors(board, king);
                 for (TaflTile kingsNeighbor : kingsNeighbors)
@@ -293,7 +293,8 @@ public class TaflUtils
                 if (isValidTile(behindKingX, behindKingY))
                 {
                     TaflTile behindKing = board[behindKingX][behindKingY];
-                    return isTileHostile(behindKing, PLAYER_WHITE);
+                    // The throne is never hostile for the king
+                    return (TaflConfig.RULE_NO_SPECIAL_TILES || !isTileThrone(behindKing)) && isTileHostile(behindKing, PLAYER_WHITE);
                 }
                 else
                 {
