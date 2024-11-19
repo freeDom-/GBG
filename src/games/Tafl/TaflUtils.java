@@ -604,8 +604,10 @@ public class TaflUtils
         ParRB rbParams = (ParRB) agentParams[2];
         ParOther otherParams = (ParOther) agentParams[3];
 
+        // TODO: remove general info from td args array entry
         paramString += shortVersion ? getNumberWithUnit(playAgent.getMaxGameNum()) + " " : "maxgames=" + playAgent.getMaxGameNum();
 
+        // TD Params
         if (tdParams != null)
         {
             paramString += shortVersion ? "(" : "";
@@ -642,9 +644,47 @@ public class TaflUtils
             paramString += shortVersion ? ")" : "";
         }
         params[0] = paramString;
-        params[1] = "";
-        params[2] = "";
-        params[3] = "";
+
+        // NT Params
+        paramString = "";
+        if (ntParams != null) {
+            paramString += shortVersion ? "(" : "";
+            if (ntParams.getUSESYMMETRY()) {
+                paramString += shortVersion ? "sym" : "usesymmetry";
+            }
+            if (ntParams.getRandomness()) {
+
+            }
+            if (ntParams.getTc()) {
+                paramString += shortVersion ? ",tc" : ",temporalcoherence";
+                // TODO: additional tc params
+            }
+            paramString += shortVersion ? ")" : "";
+        }
+        params[1] = paramString;
+
+        // RB Params
+        // TODO: add rb params
+        paramString = "";
+        params[2] = paramString;
+
+        // Other params
+        paramString = "";
+        if (otherParams != null) {
+            paramString += shortVersion ? "(" : "";
+            paramString += (shortVersion ? "em=" : "evalmode=") + otherParams.getQuickEvalMode();
+            paramString += (shortVersion ? ",tm=" : "trainevalmode=") + otherParams.getTrainEvalMode();
+            paramString += (shortVersion ? ",ne=" : "numeval=") + otherParams.getNumEval();
+            paramString += (shortVersion ? ",el=" : "episodelength=") + otherParams.getEpisodeLength();
+            if (otherParams.getLearnFromRM()) {
+                paramString += shortVersion ? "lrand" : "learnfromrandmoves";
+            }
+            if (!otherParams.getRewardIsGameScore()) {
+                paramString += shortVersion ? "crew" : "usecustomreward";
+            }
+            paramString += shortVersion ? ")" : "";
+        }
+        params[3] = paramString;
 
         return params;
     }
