@@ -647,15 +647,19 @@ public class TaflUtils
 
         // NT Params
         paramString = "";
-        if (ntParams != null) {
+        if (ntParams != null)
+        {
             paramString += shortVersion ? "(" : "";
-            if (ntParams.getUSESYMMETRY()) {
+            if (ntParams.getUSESYMMETRY())
+            {
                 paramString += shortVersion ? "sym" : "usesymmetry";
             }
-            if (ntParams.getRandomness()) {
-
+            if (ntParams.getRandomness())
+            {
+                paramString += shortVersion ? ",rand" : ",userandomtuples";
             }
-            if (ntParams.getTc()) {
+            if (ntParams.getTc())
+            {
                 paramString += shortVersion ? ",tc" : ",temporalcoherence";
                 // TODO: additional tc params
             }
@@ -670,16 +674,19 @@ public class TaflUtils
 
         // Other params
         paramString = "";
-        if (otherParams != null) {
+        if (otherParams != null)
+        {
             paramString += shortVersion ? "(" : "";
             paramString += (shortVersion ? "em=" : "evalmode=") + otherParams.getQuickEvalMode();
             paramString += (shortVersion ? ",tm=" : "trainevalmode=") + otherParams.getTrainEvalMode();
             paramString += (shortVersion ? ",ne=" : "numeval=") + otherParams.getNumEval();
             paramString += (shortVersion ? ",el=" : "episodelength=") + otherParams.getEpisodeLength();
-            if (otherParams.getLearnFromRM()) {
+            if (otherParams.getLearnFromRM())
+            {
                 paramString += shortVersion ? "lrand" : "learnfromrandmoves";
             }
-            if (!otherParams.getRewardIsGameScore()) {
+            if (!otherParams.getRewardIsGameScore())
+            {
                 paramString += shortVersion ? "crew" : "usecustomreward";
             }
             paramString += shortVersion ? ")" : "";
